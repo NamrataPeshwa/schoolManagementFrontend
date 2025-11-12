@@ -15,7 +15,7 @@ const Sidebar = ({ currentPage, setCurrentPage, isSidebarOpen, setIsSidebarOpen 
     { name: "Exams", icon: FileEdit },
     { name: "Report Card", icon: FileText },
     { name: "Time Table", icon: Calendar },
-    { name: "Profile", icon: UserCircle },
+    //{ name: "Profile", icon: UserCircle },
   ];
 
   const NavLink = ({ item }) => {
@@ -75,14 +75,14 @@ const Sidebar = ({ currentPage, setCurrentPage, isSidebarOpen, setIsSidebarOpen 
           ))}
         </nav>
 
-        <div className="mt-auto">
+        {/* <div className="mt-auto">
           <div className="flex items-center justify-between p-3 bg-white/10 rounded-lg">
             <span className="font-medium text-white/90">Dark Mode</span>
             <div className="w-12 h-6 p-1 bg-white/30 rounded-full">
               <div className="w-4 h-4 bg-white rounded-full shadow-md"></div>
             </div>
           </div>
-        </div>
+        </div> */}
       </aside>
     </>
   );
