@@ -10,7 +10,7 @@ import ExamsPage from './teacher/components/sections/ExamsPage';
 import ReportCardPage from './teacher/components/sections/ReportCardPage';
 import TimeTablePage from './teacher/components/sections/TimeTablePage';
 import ProfilePage from './teacher/components/sections/ProfilePage';
-
+import Meetings from './teacher/components/sections/Meetings';
 export default function TeacherDashboard() {
   const [currentPage, setCurrentPage] = useState("Home");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -39,6 +39,8 @@ export default function TeacherDashboard() {
         return <TimeTablePage />;
       case "Profile":
         return <ProfilePage />;
+      case "Meeting":
+        return <Meetings />;
       default:
         return <HomePage />;
     }

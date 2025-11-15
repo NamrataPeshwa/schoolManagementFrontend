@@ -2,10 +2,12 @@
 import React from 'react';
 import {
   LayoutDashboard, Users, ClipboardCheck, BookCopy, FileEdit, FileText, 
-  Calendar, UserCircle, Menu, X, Star, Briefcase
+  Calendar, Briefcase, Video
 } from 'lucide-react';
 
 const Sidebar = ({ currentPage, setCurrentPage, isSidebarOpen, setIsSidebarOpen }) => {
+  const [isExpanded, setIsExpanded] = React.useState(false);
+
   const navItems = [
     { name: "Home", icon: LayoutDashboard },
     { name: "Subject", icon: Briefcase },
@@ -15,7 +17,7 @@ const Sidebar = ({ currentPage, setCurrentPage, isSidebarOpen, setIsSidebarOpen 
     { name: "Exams", icon: FileEdit },
     { name: "Report Card", icon: FileText },
     { name: "Time Table", icon: Calendar },
-    //{ name: "Profile", icon: UserCircle },
+    { name: "Meeting", icon: Video }
   ];
 
   const NavLink = ({ item }) => {
@@ -28,15 +30,33 @@ const Sidebar = ({ currentPage, setCurrentPage, isSidebarOpen, setIsSidebarOpen 
           setIsSidebarOpen(false);
         }}
         className={`
-          flex items-center w-full px-4 py-3 rounded-lg transition-all duration-200
+          group relative flex items-center w-full px-4 py-3 rounded-xl 
+          transition-all duration-300 ease-in-out
           ${isActive
-            ? "bg-white text-[#2F69FF] shadow-md"
-            : "text-white/80 hover:text-white hover:bg-white/10"
+            ? "bg-gradient-to-r from-white to-white/95 text-[#2F69FF] shadow-lg scale-105"
+            : "text-white/90 hover:text-white hover:bg-white/10 hover:scale-105 hover:shadow-md"
           }
+          ${!isExpanded ? 'justify-center' : ''}
         `}
+        title={!isExpanded ? name : ''}
       >
-        <Icon size={20} className="mr-3" />
-        <span className="font-medium">{name}</span>
+        <div className={`${isActive ? 'animate-pulse' : ''}`}>
+          <Icon 
+            size={22} 
+            className={`${!isExpanded ? '' : 'mr-3'} flex-shrink-0 transition-transform duration-300 group-hover:scale-110`} 
+            strokeWidth={2.5}
+          />
+        </div>
+        <span 
+          className={`font-semibold transition-all duration-300 whitespace-nowrap overflow-hidden ${
+            !isExpanded ? 'w-0 opacity-0' : 'w-auto opacity-100'
+          }`}
+        >
+          {name}
+        </span>
+        {isActive && isExpanded && (
+          <div className="absolute right-3 w-2 h-2 bg-[#2F69FF] rounded-full"></div>
+        )}
       </button>
     );
   };
@@ -45,45 +65,84 @@ const Sidebar = ({ currentPage, setCurrentPage, isSidebarOpen, setIsSidebarOpen 
     <>
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 z-30 bg-black/50 lg:hidden"
+          className="fixed inset-0 z-30 bg-black/50 lg:hidden backdrop-blur-sm"
           onClick={() => setIsSidebarOpen(false)}
         ></div>
       )}
 
       <aside
+        onMouseEnter={() => setIsExpanded(true)}
+        onMouseLeave={() => setIsExpanded(false)}
         className={`
-          fixed lg:sticky top-0 left-0 z-40 h-screen w-64 bg-[#2F69FF] text-white
-          flex flex-col p-4 transition-transform duration-300
+          fixed lg:sticky top-0 left-0 z-40 h-screen 
+          bg-gradient-to-b from-[#2F69FF] via-[#2F69FF] to-[#1e4fd9]
+          text-white flex flex-col p-4 
+          transition-all duration-300 ease-in-out
+          shadow-2xl
           ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
           lg:translate-x-0
+          ${isExpanded ? 'w-64' : 'w-20'}
         `}
       >
-        <div className="flex items-center justify-between p-2 mb-4">
-          <div className="flex items-center gap-2">
-            
-            <span className="text-xl font-bold">LOGO</span>
+        {/* Logo Section */}
+        <div className="flex items-center justify-center p-4 mb-6">
+          <div className={`transition-all duration-300 overflow-hidden ${
+            !isExpanded ? 'w-10 h-10' : 'w-full'
+          }`}>
+            <div className={`flex items-center ${!isExpanded ? 'justify-center' : 'justify-start'} gap-3`}>
+              <span 
+                className={`text-xl font-bold whitespace-nowrap transition-all duration-300 ${
+                  !isExpanded ? 'w-0 opacity-0' : 'w-auto opacity-100'
+                }`}
+              >
+                EduPortal
+              </span>
+            </div>
           </div>
-          <button className="lg:hidden text-white" onClick={() => setIsSidebarOpen(false)}>
-            <X size={24} />
-          </button>
         </div>
 
-        <nav className="flex-1 space-y-2">
-          <span className="px-4 text-xs font-light text-white/60 uppercase">Menu</span>
+        {/* Divider */}
+        <div className="h-px bg-white/20 mb-6"></div>
+
+        {/* Navigation */}
+        <nav className="flex-1 space-y-2 overflow-x-hidden overflow-y-auto custom-scrollbar">
+          <span 
+            className={`px-4 text-xs font-semibold text-white/60 uppercase tracking-wider transition-all duration-300 block mb-3 ${
+              !isExpanded ? 'opacity-0 h-0' : 'opacity-100 h-auto'
+            }`}
+          >
+            MENU
+          </span>
           {navItems.map((item) => (
             <NavLink key={item.name} item={item} />
           ))}
         </nav>
 
-        {/* <div className="mt-auto">
-          <div className="flex items-center justify-between p-3 bg-white/10 rounded-lg">
-            <span className="font-medium text-white/90">Dark Mode</span>
-            <div className="w-12 h-6 p-1 bg-white/30 rounded-full">
-              <div className="w-4 h-4 bg-white rounded-full shadow-md"></div>
-            </div>
-          </div>
-        </div> */}
+        {/* Footer decoration */}
+        <div className="mt-auto pt-4">
+          <div className={`h-1 bg-gradient-to-r from-white/0 via-white/40 to-white/0 rounded-full transition-all duration-300 ${
+            !isExpanded ? 'opacity-50' : 'opacity-100'
+          }`}></div>
+        </div>
       </aside>
+
+      {/* Custom Scrollbar Styles */}
+      <style jsx>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(255, 255, 255, 0.3);
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(255, 255, 255, 0.5);
+        }
+      `}</style>
     </>
   );
 };
