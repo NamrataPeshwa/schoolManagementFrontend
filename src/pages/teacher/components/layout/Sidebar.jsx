@@ -16,7 +16,7 @@ const Sidebar = ({ currentPage, setCurrentPage, isSidebarOpen, setIsSidebarOpen 
     { name: "Notes", icon: BookCopy },
     { name: "Exams", icon: FileEdit },
     { name: "Report Card", icon: FileText },
-    { name: "Time Table", icon: Calendar },
+    { name: "Lesson planner", icon: Calendar },
     { name: "Meeting", icon: Video }
   ];
 

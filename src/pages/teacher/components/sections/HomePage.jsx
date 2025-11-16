@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Users, ClipboardCheck, BarChart3, Star } from 'lucide-react';
 import StatCard from '../common/StatCard';
 import { MOCK_STATS, MOCK_RECENT_ACTIVITY } from '../../data/mockData';
+import SubjectPage from './SubjectPage'; // Import Classes component
 
 const HomePage = () => {
   const [stats, setStats] = useState(null);
@@ -104,6 +105,9 @@ const HomePage = () => {
           </div>
         </div>
       </div>
+
+      {/* Subject Section */}
+      <SubjectPage />
     </div>
   );
 };
