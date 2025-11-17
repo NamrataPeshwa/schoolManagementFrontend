@@ -1,4 +1,3 @@
-// ReportCard Page component 
 import React, { useState } from 'react';
 import { Upload, Download, FileText } from 'lucide-react';
 import jsPDF from 'jspdf';
@@ -8,17 +7,15 @@ const ReportCardPage = () => {
   const [activeTab, setActiveTab] = useState('generate');
   const [uploadedFile, setUploadedFile] = useState(null);
   const [logoUrl, setLogoUrl] = useState('');
-  
-  // Form state for report generation
+
   const [formData, setFormData] = useState({
     studentId: '',
     studentName: '',
     className: 'Class 9',
     academicYear: '2024-2025',
-    universityName: 'ABC International School',
+    universityName: 'MIT International School',
   });
 
-  // Subject marks state
   const [subjects, setSubjects] = useState([
     { id: 1, name: 'Mathematics', maxMarks: 100, minMarks: 35, obtained: 0 },
     { id: 2, name: 'Science', maxMarks: 100, minMarks: 35, obtained: 0 },
@@ -27,37 +24,23 @@ const ReportCardPage = () => {
     { id: 5, name: 'Hindi', maxMarks: 100, minMarks: 35, obtained: 0 },
   ]);
 
-  // Handle form input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // Handle subject changes with validation
   const handleSubjectChange = (id, field, value) => {
     setSubjects(prev => prev.map(subject => {
       if (subject.id === id) {
-        if (field === 'name') {
-          return { ...subject, name: value };
-        }
-        
+        if (field === 'name') return { ...subject, name: value };
         const numValue = parseFloat(value) || 0;
-        
+
         if (field === 'maxMarks') {
-          // If obtained marks exceed new max marks, adjust obtained marks
           const newObtained = numValue < subject.obtained ? numValue : subject.obtained;
           return { ...subject, maxMarks: numValue, obtained: newObtained };
         }
-        
-        if (field === 'minMarks') {
-          return { ...subject, minMarks: numValue };
-        }
-        
+        if (field === 'minMarks') return { ...subject, minMarks: numValue };
         if (field === 'obtained') {
-          // Ensure obtained marks don't exceed max marks
           const validObtained = numValue > subject.maxMarks ? subject.maxMarks : numValue;
           return { ...subject, obtained: validObtained };
         }
@@ -66,32 +49,22 @@ const ReportCardPage = () => {
     }));
   };
 
-  // Add new subject
   const addSubject = () => {
     const newId = subjects.length > 0 ? Math.max(...subjects.map(s => s.id)) + 1 : 1;
-    setSubjects(prev => [...prev, {
-      id: newId,
-      name: '',
-      maxMarks: 100,
-      minMarks: 35,
-      obtained: 0
-    }]);
+    setSubjects(prev => [...prev, { id: newId, name: '', maxMarks: 100, minMarks: 35, obtained: 0 }]);
   };
 
-  // Remove subject
   const removeSubject = (id) => {
     if (subjects.length > 1) {
       setSubjects(prev => prev.filter(subject => subject.id !== id));
     }
   };
 
-  // Calculate percentage for a subject
   const calculatePercentage = (obtained, maxMarks) => {
     if (maxMarks === 0) return 0;
     return ((obtained / maxMarks) * 100).toFixed(2);
   };
 
-  // Calculate grade based on percentage
   const calculateGrade = (percentage) => {
     if (percentage >= 90) return 'A+';
     if (percentage >= 80) return 'A';
@@ -103,7 +76,6 @@ const ReportCardPage = () => {
     return 'F';
   };
 
-  // Calculate GPA on 5.0 scale
   const calculateGPA = () => {
     let totalGradePoints = 0;
     let totalSubjects = subjects.length;
@@ -127,21 +99,18 @@ const ReportCardPage = () => {
     return totalSubjects > 0 ? (totalGradePoints / totalSubjects).toFixed(2) : 0.0;
   };
 
-  // Calculate total marks
   const calculateTotals = () => {
     const totalObtained = subjects.reduce((sum, sub) => sum + sub.obtained, 0);
     const totalMax = subjects.reduce((sum, sub) => sum + sub.maxMarks, 0);
     const percentage = totalMax > 0 ? ((totalObtained / totalMax) * 100).toFixed(2) : 0;
-    
     return { totalObtained, totalMax, percentage };
   };
 
-  // Function to convert image URL to base64
   const getBase64Image = (url) => {
     return new Promise((resolve, reject) => {
       const img = new Image();
       img.crossOrigin = 'Anonymous';
-      img.onload = function() {
+      img.onload = function () {
         const canvas = document.createElement('canvas');
         canvas.width = this.width;
         canvas.height = this.height;
@@ -150,14 +119,13 @@ const ReportCardPage = () => {
         const dataURL = canvas.toDataURL('image/png');
         resolve(dataURL);
       };
-      img.onerror = function() {
+      img.onerror = function () {
         reject(new Error('Could not load image'));
       };
       img.src = url;
     });
   };
 
-  // Generate Advanced Professional Report Card with Logo
   const generatePDF = async () => {
     if (!formData.studentId || !formData.studentName) {
       alert('Please enter Student ID and Name');
@@ -170,19 +138,17 @@ const ReportCardPage = () => {
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
 
-    // ========== PROFESSIONAL LETTERHEAD HEADER ==========
     doc.setFillColor(47, 105, 255);
     doc.rect(0, 0, pageWidth, 4, 'F');
-    
+
     doc.setFillColor(250, 251, 255);
     doc.rect(0, 4, pageWidth, 42, 'F');
-    
+
     if (logoUrl) {
       try {
         const logoData = await getBase64Image(logoUrl);
         doc.addImage(logoData, 'PNG', 12, 12, 16, 16);
-      } catch (error) {
-        console.error('Logo loading failed:', error);
+      } catch {
         doc.setFillColor(47, 105, 255);
         doc.circle(20, 20, 8, 'F');
         doc.setTextColor(255, 255, 255);
@@ -198,31 +164,30 @@ const ReportCardPage = () => {
       doc.setFont('helvetica', 'bold');
       doc.text(formData.universityName.substring(0, 1), 20, 23, { align: 'center' });
     }
-    
+
     doc.setTextColor(30, 41, 59);
     doc.setFontSize(18);
     doc.setFont('helvetica', 'bold');
     doc.text(formData.universityName.toUpperCase(), 33, 18);
-    
+
     doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(71, 85, 105);
     doc.text('NAAC A+ Accredited', 33, 24);
-    doc.text('Phone: 0821 2343887 | Email: baden@school.edu', 33, 29);
-    
+    doc.text('Phone: 0821 2343887 | Email: mit@school.edu', 33, 29);
+
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(47, 105, 255);
     doc.text('REPORT CARD', pageWidth / 2, 39, { align: 'center' });
-    
+
     doc.setDrawColor(226, 232, 240);
     doc.setLineWidth(0.5);
     doc.line(0, 46, pageWidth, 46);
 
-    // ========== DOCUMENT INFO BAR ==========
     doc.setFillColor(241, 245, 249);
     doc.rect(0, 46, pageWidth, 10, 'F');
-    
+
     doc.setFontSize(8);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(51, 65, 85);
@@ -230,57 +195,72 @@ const ReportCardPage = () => {
     doc.text(`Academic Year: ${formData.academicYear}`, pageWidth / 2, 52, { align: 'center' });
     doc.text(`Issue Date: ${new Date().toLocaleDateString('en-US')}`, pageWidth - 15, 52, { align: 'right' });
 
-    // ========== STUDENT INFORMATION SECTION ==========
     doc.setFontSize(11);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(30, 41, 59);
     doc.text('STUDENT INFORMATION', 15, 64);
-    
+
     doc.setDrawColor(226, 232, 240);
     doc.setLineWidth(0.3);
     doc.rect(15, 67, pageWidth - 30, 28);
-    
+
     doc.line(15, 74, pageWidth - 15, 74);
     doc.line(15, 81, pageWidth - 15, 81);
     doc.line(15, 88, pageWidth - 15, 88);
     doc.line(pageWidth / 2, 67, pageWidth / 2, 95);
-    
+
     doc.setFontSize(8);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(71, 85, 105);
-    
     doc.text('Student Name', 18, 71);
     doc.text('Student ID', 18, 78);
     doc.text('Grade Level', 18, 85);
     doc.text('Program', 18, 92);
-    
+
     doc.text('Date of Birth', pageWidth / 2 + 3, 71);
     doc.text('Enrollment Status', pageWidth / 2 + 3, 78);
     doc.text('Academic Advisor', pageWidth / 2 + 3, 85);
     doc.text('Graduation Date', pageWidth / 2 + 3, 92);
-    
+
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(30, 41, 59);
-    
     doc.text(formData.studentName, 50, 71);
     doc.text(formData.studentId, 50, 78);
     doc.text(formData.className, 50, 85);
     doc.text('Regular Academic Program', 50, 92);
-    
+
     doc.text('01/01/2008', pageWidth / 2 + 35, 71);
     doc.text('Active - Full Time', pageWidth / 2 + 35, 78);
     doc.text('Academic Office', pageWidth / 2 + 35, 85);
     doc.text('Expected: June 2026', pageWidth / 2 + 35, 92);
 
-    // ========== ACADEMIC PERFORMANCE SECTION ==========
     doc.setFontSize(11);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(30, 41, 59);
     doc.text('ACADEMIC PERFORMANCE RECORD', 15, 106);
-    
-    const perfStatus = percentage >= 90 ? 'EXCELLENT' : percentage >= 80 ? 'VERY GOOD' : percentage >= 70 ? 'GOOD' : percentage >= 60 ? 'SATISFACTORY' : 'NEEDS IMPROVEMENT';
-    const perfColor = percentage >= 90 ? [34, 197, 94] : percentage >= 80 ? [59, 130, 246] : percentage >= 70 ? [139, 92, 246] : percentage >= 60 ? [251, 146, 60] : [239, 68, 68];
-    
+
+    const perfStatus =
+      percentage >= 90
+        ? 'EXCELLENT'
+        : percentage >= 80
+        ? 'VERY GOOD'
+        : percentage >= 70
+        ? 'GOOD'
+        : percentage >= 60
+        ? 'SATISFACTORY'
+        : 'NEEDS IMPROVEMENT';
+
+    const perfColor =
+      percentage >= 90
+        ? [34, 197, 94]
+        : percentage >= 80
+        ? [59, 130, 246]
+        : percentage >= 70
+        ? [139, 92, 246]
+        : percentage >= 60
+        ? [251, 146, 60]
+        : [239, 68, 68];
+
     doc.setFillColor(...perfColor);
     doc.roundedRect(pageWidth - 65, 100, 50, 8, 2, 2, 'F');
     doc.setFontSize(8);
@@ -288,11 +268,10 @@ const ReportCardPage = () => {
     doc.setTextColor(255, 255, 255);
     doc.text(perfStatus, pageWidth - 40, 105, { align: 'center' });
 
-    // ========== ENHANCED ACADEMIC TABLE ==========
     const tableData = subjects.map((subject, index) => {
       const perc = parseFloat(calculatePercentage(subject.obtained, subject.maxMarks));
       const grade = calculateGrade(perc);
-      
+
       let descriptor = '';
       if (perc >= 90) descriptor = 'Outstanding';
       else if (perc >= 80) descriptor = 'Excellent';
@@ -300,7 +279,7 @@ const ReportCardPage = () => {
       else if (perc >= 60) descriptor = 'Satisfactory';
       else if (perc >= 40) descriptor = 'Developing';
       else descriptor = 'Needs Support';
-      
+
       return [
         (index + 1).toString(),
         subject.name,
@@ -308,7 +287,7 @@ const ReportCardPage = () => {
         subject.obtained.toString(),
         perc.toFixed(1) + '%',
         grade,
-        descriptor
+        descriptor,
       ];
     });
 
@@ -317,7 +296,7 @@ const ReportCardPage = () => {
       head: [['#', 'Subject/Course', 'Max', 'Score', 'Percent', 'Grade', 'Performance Level']],
       body: tableData,
       theme: 'grid',
-      headStyles: { 
+      headStyles: {
         fillColor: [51, 65, 85],
         textColor: [255, 255, 255],
         fontStyle: 'bold',
@@ -325,17 +304,17 @@ const ReportCardPage = () => {
         halign: 'center',
         cellPadding: 3,
         lineWidth: 0.1,
-        lineColor: [148, 163, 184]
+        lineColor: [148, 163, 184],
       },
       bodyStyles: {
         fontSize: 9,
         cellPadding: 2.5,
         lineWidth: 0.1,
         lineColor: [226, 232, 240],
-        textColor: [30, 41, 59]
+        textColor: [30, 41, 59],
       },
       alternateRowStyles: {
-        fillColor: [248, 250, 252]
+        fillColor: [248, 250, 252],
       },
       columnStyles: {
         0: { cellWidth: 10, halign: 'center', fontStyle: 'bold', fillColor: [241, 245, 249] },
@@ -344,30 +323,23 @@ const ReportCardPage = () => {
         3: { cellWidth: 18, halign: 'center', fontStyle: 'bold', textColor: [47, 105, 255] },
         4: { cellWidth: 22, halign: 'center', fontStyle: 'bold' },
         5: { cellWidth: 18, halign: 'center', fontStyle: 'bold', fontSize: 10 },
-        6: { cellWidth: 38, halign: 'center', fontSize: 8, textColor: [71, 85, 105] }
+        6: { cellWidth: 38, halign: 'center', fontSize: 8, textColor: [71, 85, 105] },
       },
       margin: { left: 15, right: 15 },
-      didParseCell: function(data) {
+      didParseCell: function (data) {
         if (data.column.index === 5 && data.section === 'body') {
           const grade = data.cell.text[0];
-          if (grade === 'A+' || grade === 'A') {
-            data.cell.styles.textColor = [34, 197, 94];
-          } else if (grade === 'B+' || grade === 'B') {
-            data.cell.styles.textColor = [59, 130, 246];
-          } else if (grade === 'C+' || grade === 'C') {
-            data.cell.styles.textColor = [251, 146, 60];
-          } else if (grade === 'D') {
-            data.cell.styles.textColor = [156, 163, 175];
-          } else {
-            data.cell.styles.textColor = [239, 68, 68];
-          }
+          if (grade === 'A+' || grade === 'A') data.cell.styles.textColor = [34, 197, 94];
+          else if (grade === 'B+' || grade === 'B') data.cell.styles.textColor = [59, 130, 246];
+          else if (grade === 'C+' || grade === 'C') data.cell.styles.textColor = [251, 146, 60];
+          else if (grade === 'D') data.cell.styles.textColor = [156, 163, 175];
+          else data.cell.styles.textColor = [239, 68, 68];
         }
-      }
+      },
     });
 
-    // ========== ACADEMIC SUMMARY SECTION ==========
     const summaryY = doc.lastAutoTable.finalY + 10;
-    
+
     doc.setFontSize(11);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(30, 41, 59);
@@ -376,156 +348,156 @@ const ReportCardPage = () => {
     doc.setDrawColor(226, 232, 240);
     doc.setLineWidth(0.3);
     doc.rect(15, summaryY + 3, pageWidth - 30, 28);
-    
+
     const col1 = 15 + (pageWidth - 30) / 4;
     const col2 = 15 + (pageWidth - 30) / 2;
     const col3 = 15 + 3 * (pageWidth - 30) / 4;
-    
+
     doc.line(col1, summaryY + 3, col1, summaryY + 31);
     doc.line(col2, summaryY + 3, col2, summaryY + 31);
     doc.line(col3, summaryY + 3, col3, summaryY + 31);
-    
+
     doc.setFontSize(8);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(71, 85, 105);
-    
     doc.text('Total Credits', (15 + col1) / 2, summaryY + 10, { align: 'center' });
     doc.text('Attempted', (15 + col1) / 2, summaryY + 14, { align: 'center' });
     doc.text('Total Credits', (col1 + col2) / 2, summaryY + 10, { align: 'center' });
     doc.text('Earned', (col1 + col2) / 2, summaryY + 14, { align: 'center' });
-    doc.text('Overall', (col2 + col3) / 2, summaryY + 10, { align: 'center' });
-    doc.text('Percentage', (col2 + col3) / 2, summaryY + 14, { align: 'center' });
-    doc.text('Grade Point', (col3 + pageWidth - 15) / 2, summaryY + 10, { align: 'center' });
-    doc.text('Average (GPA)', (col3 + pageWidth - 15) / 2, summaryY + 14, { align: 'center' });
-    
+    doc.text('Overall Percentage', (col2 + col3) / 2, summaryY + 10, { align: 'center' });
+    doc.text('Grade Point Average (GPA)', (col2 + col3) / 2, summaryY + 14, { align: 'center' });
+    doc.text('GPA', (col3 + pageWidth - 15) / 2, summaryY + 10, { align: 'center' });
+
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(30, 41, 59);
-    
     doc.text(totalMax.toString(), (15 + col1) / 2, summaryY + 23, { align: 'center' });
     doc.text(totalObtained.toString(), (col1 + col2) / 2, summaryY + 23, { align: 'center' });
-    
+
     doc.setTextColor(47, 105, 255);
     doc.text(percentage + '%', (col2 + col3) / 2, summaryY + 23, { align: 'center' });
-    
+
     doc.setTextColor(34, 197, 94);
     doc.text(gpa, (col3 + pageWidth - 15) / 2, summaryY + 23, { align: 'center' });
 
-    // ========== GRADING SCALE ==========
     const gradeY = summaryY + 38;
-    
+
     doc.setFontSize(10);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(30, 41, 59);
     doc.text('GRADING SCALE & PERFORMANCE STANDARDS', 15, gradeY);
-    
+
     doc.setDrawColor(226, 232, 240);
     doc.setLineWidth(0.3);
     doc.roundedRect(15, gradeY + 3, pageWidth - 30, 18, 2, 2);
-    
+
     doc.setTextColor(47, 105, 255);
     doc.setFontSize(9);
     doc.setFont('helvetica', 'bold');
     doc.text('GRADING SCALE', 20, gradeY + 7);
-    
+
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(7.5);
-    
+
     const gradeColors = [
-      [34, 197, 94], [59, 130, 246], [139, 92, 246], [236, 72, 153],
-      [251, 146, 60], [234, 179, 8], [156, 163, 175], [239, 68, 68]
+      [34, 197, 94],
+      [59, 130, 246],
+      [139, 92, 246],
+      [236, 72, 153],
+      [251, 146, 60],
+      [234, 179, 8],
+      [156, 163, 175],
+      [239, 68, 68],
     ];
-    
+
     const grades = ['A+', 'A', 'B+', 'B', 'C+', 'C', 'D', 'F'];
     const gradeRanges = ['90-100', '80-89', '70-79', '60-69', '50-59', '40-49', '35-39', '<35'];
-    
+
     let gradeX = 20;
     grades.forEach((grade, index) => {
       doc.setFillColor(...gradeColors[index]);
       doc.roundedRect(gradeX, gradeY + 11, 5, 5, 0.8, 0.8, 'F');
-      
       doc.setTextColor(30, 30, 30);
       doc.setFont('helvetica', 'bold');
       doc.text(grade, gradeX + 7, gradeY + 14);
-      
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(6.5);
       doc.text(gradeRanges[index], gradeX + 7, gradeY + 18);
-      
       doc.setFontSize(7.5);
       gradeX += 22;
     });
 
-    // ========== REMARKS SECTION ==========
     const remarkY = gradeY + 26;
-    
+
     doc.setFontSize(10);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(30, 41, 59);
     doc.text('REMARKS & RECOMMENDATIONS', 15, remarkY);
-    
+
     doc.setDrawColor(226, 232, 240);
     doc.setLineWidth(0.3);
     doc.rect(15, remarkY + 3, pageWidth - 30, 15);
-    
+
     doc.setFontSize(8);
     doc.setFont('helvetica', 'italic');
     doc.setTextColor(71, 85, 105);
-    
-    let remark = '';
-    if (percentage >= 90) {
-      remark = 'Outstanding academic achievement. Student demonstrates exceptional mastery of all subjects.';
-    } else if (percentage >= 80) {
-      remark = 'Excellent performance. Student shows strong understanding and consistent high achievement.';
-    } else if (percentage >= 70) {
-      remark = 'Good academic progress. Student meets all learning standards with solid performance.';
-    } else if (percentage >= 60) {
-      remark = 'Satisfactory achievement. Continued effort recommended to strengthen understanding.';
-    } else {
-      remark = 'Additional support recommended. Student would benefit from focused intervention strategies.';
-    }
-    
-    doc.text(remark, 18, remarkY + 9);
-    doc.text('This transcript is valid only with official seal and authorized signature.', 18, remarkY + 14);
 
-    // ========== CERTIFICATION FOOTER ==========
+    let remark = '';
+    if (percentage >= 90)
+      remark = 'Outstanding academic achievement. Student demonstrates exceptional mastery of all subjects.';
+    else if (percentage >= 80)
+      remark = 'Excellent performance. Student shows strong understanding and consistent high achievement.';
+    else if (percentage >= 70)
+      remark = 'Good academic progress. Student meets all learning standards with solid performance.';
+    else if (percentage >= 60)
+      remark = 'Satisfactory achievement. Continued effort recommended to strengthen understanding.';
+    else remark = 'Additional support recommended. Student would benefit from focused intervention strategies.';
+
+    doc.text(remark, 18, remarkY + 9);
+    doc.text(
+      'This transcript is valid only with official seal and authorized signature.',
+      18,
+      remarkY + 14
+    );
+
     const footerY = pageHeight - 28;
-    
+
     doc.setDrawColor(226, 232, 240);
     doc.setLineWidth(0.3);
     doc.line(15, footerY, pageWidth - 15, footerY);
-    
+
     doc.setFontSize(8);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(71, 85, 105);
-    
+
     doc.line(20, footerY + 12, 60, footerY + 12);
     doc.text('Principal/Head of School', 40, footerY + 17, { align: 'center' });
     doc.text(`Date: ${new Date().toLocaleDateString('en-US')}`, 40, footerY + 21, { align: 'center' });
-    
+
     doc.line(pageWidth - 60, footerY + 12, pageWidth - 20, footerY + 12);
     doc.text('Registrar/Academic Officer', pageWidth - 40, footerY + 17, { align: 'center' });
     doc.text(`Date: ${new Date().toLocaleDateString('en-US')}`, pageWidth - 40, footerY + 21, { align: 'center' });
-    
+
     doc.setDrawColor(47, 105, 255);
     doc.setLineWidth(1.5);
     doc.circle(pageWidth / 2, footerY + 12, 8, 'S');
-    
+
     doc.setFontSize(7);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(47, 105, 255);
     doc.text('OFFICIAL', pageWidth / 2, footerY + 10, { align: 'center' });
     doc.text('SEAL', pageWidth / 2, footerY + 14, { align: 'center' });
-    
+
     doc.setFillColor(47, 105, 255);
     doc.rect(0, pageHeight - 4, pageWidth, 4, 'F');
 
     doc.save(`${formData.studentId}.pdf`);
-    
-    alert(`✅ Official academic transcript generated successfully!\n\nStudent: ${formData.studentName}\nGPA: ${gpa}/5.0\nStatus: ${perfStatus}`);
+
+    alert(
+      `Official academic transcript generated successfully!\n\nStudent: ${formData.studentName}\nGPA: ${gpa}/5.0\nStatus: ${perfStatus}`
+    );
   };
 
-  // Handle file upload
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (file && file.type === 'application/pdf') {
@@ -536,7 +508,6 @@ const ReportCardPage = () => {
     }
   };
 
-  // Download uploaded file
   const downloadUploadedFile = () => {
     if (uploadedFile) {
       const url = URL.createObjectURL(uploadedFile);
@@ -552,7 +523,6 @@ const ReportCardPage = () => {
 
   return (
     <div className="space-y-6">
-      {/* Tab Selection */}
       <div className="p-6 bg-white rounded-lg shadow-sm">
         <div className="flex gap-4 border-b border-gray-200">
           <button
@@ -566,6 +536,7 @@ const ReportCardPage = () => {
             <FileText className="inline-block mr-2" size={18} />
             Generate Report Card
           </button>
+
           <button
             onClick={() => setActiveTab('upload')}
             className={`pb-3 px-4 font-semibold transition-all ${
@@ -580,16 +551,15 @@ const ReportCardPage = () => {
         </div>
       </div>
 
-      {/* Generate Report Card Tab */}
       {activeTab === 'generate' && (
         <div className="space-y-6">
-          {/* Basic Information */}
           <div className="p-6 bg-white rounded-lg shadow-sm">
             <h3 className="text-lg font-semibold mb-4">Student & School Information</h3>
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Student ID 
+                  Student ID
                 </label>
                 <input
                   type="text"
@@ -597,38 +567,35 @@ const ReportCardPage = () => {
                   value={formData.studentId}
                   onChange={handleInputChange}
                   placeholder="e.g., STU2024001"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF] focus:border-transparent outline-none"
-                  required
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF]"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Student Name 
+                  Student Name
                 </label>
                 <input
                   type="text"
                   name="studentName"
                   value={formData.studentName}
                   onChange={handleInputChange}
-                  placeholder="e.g., John Doe"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF] focus:border-transparent outline-none"
-                  required
+                  placeholder="e.g., Raghav M J"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF]"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  University/School Name 
+                  University/School Name
                 </label>
                 <input
                   type="text"
                   name="universityName"
                   value={formData.universityName}
                   onChange={handleInputChange}
-                  placeholder="e.g., ABC School"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF] focus:border-transparent outline-none"
-                  required
+                  placeholder="e.g., MIT School"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF]"
                 />
               </div>
 
@@ -640,7 +607,7 @@ const ReportCardPage = () => {
                   name="className"
                   value={formData.className}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF] focus:border-transparent outline-none"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF]"
                 >
                   <option>Class 9</option>
                   <option>Class 8</option>
@@ -658,7 +625,7 @@ const ReportCardPage = () => {
                   name="academicYear"
                   value={formData.academicYear}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF] focus:border-transparent outline-none"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF]"
                 >
                   <option>2024-2025</option>
                   <option>2023-2024</option>
@@ -675,20 +642,18 @@ const ReportCardPage = () => {
                   value={logoUrl}
                   onChange={(e) => setLogoUrl(e.target.value)}
                   placeholder="https://example.com/logo.png"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF] focus:border-transparent outline-none"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF]"
                 />
-                <p className="text-xs text-gray-500 mt-1">Direct image URL (PNG, JPG)</p>
               </div>
             </div>
           </div>
 
-          {/* Subjects & Marks */}
           <div className="p-6 bg-white rounded-lg shadow-sm">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold">Subject-wise Marks</h3>
               <button
                 onClick={addSubject}
-                className="py-2 px-4 bg-green-500 text-white font-medium rounded-lg hover:bg-green-600 transition"
+                className="py-2 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
               >
                 + Add Subject
               </button>
@@ -698,20 +663,21 @@ const ReportCardPage = () => {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Subject Name</th>
-                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Max Marks</th>
-                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Min Marks</th>
-                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Obtained</th>
-                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Percentage</th>
-                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Grade</th>
-                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Action</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium">Subject Name</th>
+                    <th className="px-4 py-3 text-center text-xs font-medium">Max Marks</th>
+                    <th className="px-4 py-3 text-center text-xs font-medium">Min Marks</th>
+                    <th className="px-4 py-3 text-center text-xs font-medium">Obtained</th>
+                    <th className="px-4 py-3 text-center text-xs font-medium">Percentage</th>
+                    <th className="px-4 py-3 text-center text-xs font-medium">Grade</th>
+                    <th className="px-4 py-3 text-center text-xs font-medium">Action</th>
                   </tr>
                 </thead>
+
                 <tbody className="bg-white divide-y divide-gray-200">
                   {subjects.map((subject) => {
                     const percentage = calculatePercentage(subject.obtained, subject.maxMarks);
                     const grade = calculateGrade(percentage);
-                    
+
                     return (
                       <tr key={subject.id}>
                         <td className="px-4 py-3">
@@ -720,51 +686,48 @@ const ReportCardPage = () => {
                             value={subject.name}
                             onChange={(e) => handleSubjectChange(subject.id, 'name', e.target.value)}
                             placeholder="Subject Name"
-                            className="w-full px-3 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-[#2F69FF] outline-none"
+                            className="w-full px-3 py-1 border rounded"
                           />
                         </td>
-                        <td className="px-4 py-3">
+
+                        <td className="px-4 py-3 text-center">
                           <input
                             type="number"
                             value={subject.maxMarks}
                             onChange={(e) => handleSubjectChange(subject.id, 'maxMarks', e.target.value)}
-                            className="w-20 px-3 py-1 ml-20 border border-gray-300 rounded text-center focus:ring-1 focus:ring-[#2F69FF] outline-none"
+                            className="w-20 px-3 py-1 border rounded text-center"
                             min="0"
                           />
                         </td>
-                        <td className="px-4 py-3">
+
+                        <td className="px-4 py-3 text-center">
                           <input
                             type="number"
                             value={subject.minMarks}
                             onChange={(e) => handleSubjectChange(subject.id, 'minMarks', e.target.value)}
-                            className="w-20 px-3 py-1 ml-10 border border-gray-300 rounded text-center focus:ring-1 focus:ring-[#2F69FF] outline-none"
+                            className="w-20 px-3 py-1 border rounded text-center"
                             min="0"
                           />
                         </td>
-                        <td className="px-4 py-3">
+
+                        <td className="px-4 py-3 text-center">
                           <input
                             type="number"
                             value={subject.obtained}
                             onChange={(e) => handleSubjectChange(subject.id, 'obtained', e.target.value)}
-                            className="w-20 px-3 py-1 ml-12 border border-gray-300 rounded text-center focus:ring-1 focus:ring-[#2F69FF] outline-none"
+                            className="w-20 px-3 py-1 border rounded text-center"
                             min="0"
                             max={subject.maxMarks}
                           />
-                          {subject.obtained > subject.maxMarks && (
-                            <p className="text-xs text-red-500 mt-1">Max: {subject.maxMarks}</p>
-                          )}
                         </td>
-                        <td className="px-4 py-3 text-center text-sm font-medium text-gray-700">
-                          {percentage}%
-                        </td>
-                        <td className="px-4 py-3 text-center text-sm font-bold text-gray-800">
-                          {grade}
-                        </td>
+
+                        <td className="px-4 py-3 text-center">{percentage}%</td>
+                        <td className="px-4 py-3 text-center font-bold">{grade}</td>
+
                         <td className="px-4 py-3 text-center">
                           <button
                             onClick={() => removeSubject(subject.id)}
-                            className="text-red-600 hover:text-red-800 font-medium"
-                            disabled={subjects.length === 1}
+                            className="text-blue-600 hover:text-blue-800"
                           >
                             Remove
                           </button>
@@ -776,24 +739,25 @@ const ReportCardPage = () => {
               </table>
             </div>
 
-            {/* Summary Section */}
-            <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+            <div className="mt-6 p-4 bg-blue-50 rounded-lg border">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <p className="text-sm text-gray-600">Total Marks Obtained</p>
-                  <p className="text-2xl font-bold text-gray-800">
+                  <p className="text-sm text-gray-600 ml-2">Total Marks Obtained</p>
+                  <p className="text-2xl font-bold text-[#2F69FF] ml-5">
                     {calculateTotals().totalObtained} / {calculateTotals().totalMax}
                   </p>
                 </div>
+
                 <div>
-                  <p className="text-sm text-gray-600">Overall Percentage</p>
-                  <p className="text-2xl font-bold text-[#2F69FF]">
+                  <p className="text-sm text-gray-600 ml-10">Overall Percentage</p>
+                  <p className="text-2xl font-bold text-[#2F69FF] ml-14">
                     {calculateTotals().percentage}%
                   </p>
                 </div>
+
                 <div>
-                  <p className="text-sm text-gray-600">GPA (5.0 Scale)</p>
-                  <p className="text-2xl font-bold text-green-600">
+                  <p className="text-sm text-gray-600 ml-20">GPA (5.0 Scale)</p>
+                  <p className="text-2xl font-bold text-blue-600 ml-20">
                     {calculateGPA()} / 5.0
                   </p>
                 </div>
@@ -801,11 +765,10 @@ const ReportCardPage = () => {
             </div>
           </div>
 
-          {/* Action Buttons */}
           <div className="flex gap-4 justify-center">
             <button
               onClick={generatePDF}
-              className="py-3 px-6 bg-gradient-to-r from-[#2F69FF] to-[#1e4fd9] text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center gap-2"
+              className="py-3 px-6 bg-[#2F69FF] text-white rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center gap-2"
             >
               <Download size={20} />
               Generate & Download PDF
@@ -814,44 +777,38 @@ const ReportCardPage = () => {
         </div>
       )}
 
-      {/* Upload Report Card Tab */}
       {activeTab === 'upload' && (
         <div className="p-6 bg-white rounded-lg shadow-sm">
           <h3 className="text-lg font-semibold mb-4">Upload Existing Report Card</h3>
-          
-          <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-[#2F69FF] transition">
+
+          <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-[#2F69FF]">
             <Upload className="mx-auto mb-4 text-gray-400" size={48} />
-            <p className="text-gray-600 mb-4">
-              Upload a PDF report card file
-            </p>
+            <p className="text-gray-600 mb-4">Upload a PDF report card file</p>
+
             <label className="inline-block">
-              <input
-                type="file"
-                accept=".pdf"
-                onChange={handleFileUpload}
-                className="hidden"
-              />
-              <span className="py-2 px-6 bg-[#2F69FF] text-white font-medium rounded-lg cursor-pointer hover:bg-blue-700 inline-block">
+              <input type="file" accept=".pdf" onChange={handleFileUpload} className="hidden" />
+              <span className="py-2 px-6 bg-[#2F69FF] text-white rounded-lg cursor-pointer">
                 Choose File
               </span>
             </label>
           </div>
 
           {uploadedFile && (
-            <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+            <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <FileText className="text-green-600" size={24} />
+                  <FileText className="text-blue-600" size={24} />
                   <div>
-                    <p className="font-semibold text-gray-800">{uploadedFile.name}</p>
+                    <p className="font-semibold">{uploadedFile.name}</p>
                     <p className="text-sm text-gray-600">
                       {(uploadedFile.size / 1024).toFixed(2)} KB
                     </p>
                   </div>
                 </div>
+
                 <button
                   onClick={downloadUploadedFile}
-                  className="py-2 px-4 bg-[#2F69FF] text-white font-medium rounded-lg hover:bg-blue-700 flex items-center gap-2"
+                  className="py-2 px-4 bg-[#2F69FF] text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
                 >
                   <Download size={18} />
                   Download
