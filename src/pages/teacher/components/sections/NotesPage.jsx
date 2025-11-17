@@ -67,7 +67,7 @@ const NotesPage = () => {
           <h3 className="text-lg font-semibold mb-4">Previously Added Notes</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {MOCK_NOTES.map((subject) => (
-              <div key={subject.id} className="p-5 rounded-lg shadow-sm bg-green-50">
+              <div key={subject.id} className="p-5 rounded-lg shadow-sm bg-blue-50">
                 <h4 className="font-semibold text-lg mb-3">{subject.subject}</h4>
                 <div className="space-y-2">
                   {subject.topics.map((topic) => (
@@ -75,7 +75,7 @@ const NotesPage = () => {
                       <span className="text-sm font-medium text-gray-700">{topic}</span>
                       <div className="flex gap-2">
                         <button className="text-blue-500 hover:text-blue-700"><Edit size={16} /></button>
-                        <button className="text-red-500 hover:text-red-700"><Trash size={16} /></button>
+                        <button className="text-blue-500 hover:text-blue-700"><Trash size={16} /></button>
                       </div>
                     </div>
                   ))}

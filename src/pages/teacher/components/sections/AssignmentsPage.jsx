@@ -108,7 +108,7 @@ const AssignmentsPage = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{asm.className}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{asm.submittedOn}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${asm.status === 'Pending Review' ? 'bg-yellow-100 text-yellow-800' : asm.status.startsWith('Reviewed') ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${asm.status === 'Pending Review' ? 'bg-blue-100 text-blue-800' : asm.status.startsWith('Reviewed') ? 'bg-blue-100 text-blue-800' : 'bg-blue-100 text-blue-800'}`}>
                         {asm.status}
                       </span>
                     </td>
@@ -157,13 +157,13 @@ const AssignmentsPage = () => {
             <div className="flex flex-col gap-2">
               <button
                 onClick={closeModal}
-                className="w-full py-2 px-4 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700"
+                className="w-full py-2 px-4 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-900"
               >
                 Accept & Grade
               </button>
               <button
                 onClick={closeModal}
-                className="w-full py-2 px-4 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700"
+                className="w-full py-2 px-4 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-900"
               >
                 Reject & Ask for Resubmission
               </button>

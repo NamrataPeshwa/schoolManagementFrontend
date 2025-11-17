@@ -37,7 +37,7 @@ const ClassesPage = () => {
                 <div>
                   <h3 className="font-semibold text-md">{cls.name}</h3>
                   <p className="text-gray-500">{cls.students} Students</p>
-                  <p className="text-red-500 text-sm">{cls.pending} Pending</p>
+                  <p className="text-blue-800 text-sm">{cls.pending} Pending</p>
                 </div>
                 <button
                   onClick={() => setSelectedClass(cls)}
@@ -72,7 +72,7 @@ const ClassesPage = () => {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{student.email}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{student.lastActive}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${student.attendance === 'Present' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${student.attendance === 'Present' ? 'bg-blue-100 text-blue-700' : 'bg-blue-200 text-blue-900'}`}>
                             {student.attendance}
                           </span>
                         </td>
@@ -96,8 +96,8 @@ const ClassesPage = () => {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="p-2 rounded-full bg-green-100">
-                      <CheckCircle className="text-green-500" size={20} />
+                    <div className="p-2 rounded-full bg-blue-100">
+                      <CheckCircle className="text-blue-500" size={20} />
                     </div>
                     <div>
                       <span className="text-sm text-gray-500">Today: Present</span>
@@ -105,8 +105,8 @@ const ClassesPage = () => {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="p-2 rounded-full bg-yellow-100">
-                      <AlertCircle className="text-yellow-500" size={20} />
+                    <div className="p-2 rounded-full bg-blue-100">
+                      <AlertCircle className="text-blue-500" size={20} />
                     </div>
                     <div>
                       <span className="text-sm text-gray-500">Absent</span>
@@ -132,11 +132,11 @@ const ClassesPage = () => {
             {/* Simple Calendar Placeholder */}
             <div className="text-center font-medium mb-2">November 2025</div>
             <div className="grid grid-cols-7 gap-1 text-center text-sm">
-              <span className="text-red-500">Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span className="text-red-500">Sa</span>
+              <span className="text-blue-500">Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span className="text-blue-500">Sa</span>
               {/* Dummy days */}
               <span className="text-gray-300">26</span><span className="text-gray-300">27</span><span className="text-gray-300">28</span><span className="text-gray-300">29</span><span className="text-gray-300">30</span><span className="text-gray-300">31</span><span>1</span>
-              <span>2</span><span>3</span><span>4</span><span>5</span><span className="bg-green-100 text-green-800 rounded-full">6</span><span>7</span><span>8</span>
-              <span className="bg-red-100 text-red-800 rounded-full">9</span><span>10</span><span>11</span><span className="bg-green-100 text-green-800 rounded-full">12</span><span>13</span><span>14</span><span>15</span>
+              <span>2</span><span>3</span><span>4</span><span>5</span><span className="bg-blue-100 text-blue-800 rounded-full">6</span><span>7</span><span>8</span>
+              <span className="bg-blue-100 text-blue-800 rounded-full">9</span><span>10</span><span>11</span><span className="bg-blue-100 text-blue-800 rounded-full">12</span><span>13</span><span>14</span><span>15</span>
               <span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span><span>22</span>
               <span>23</span><span>24</span><span>25</span><span>26</span><span>27</span><span>28</span><span>29</span>
               <span>30</span>

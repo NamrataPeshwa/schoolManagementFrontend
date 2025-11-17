@@ -20,7 +20,7 @@ const MOCK_SUBJECTS = [
     topics: 10,
     nextClass: "Tomorrow, 10:00 AM",
     completion: 45,
-    color: "bg-green-100 text-green-800"
+    color: "bg-blue-100 text-blue-800"
   },
   { 
     id: 3, 
@@ -30,7 +30,7 @@ const MOCK_SUBJECTS = [
     topics: 8,
     nextClass: "Friday, 11:00 AM",
     completion: 38,
-    color: "bg-purple-100 text-purple-800"
+    color: "bg-blue-100 text-blue-800"
   },
   { 
     id: 4, 
@@ -40,7 +40,7 @@ const MOCK_SUBJECTS = [
     topics: 15,
     nextClass: "Monday, 9:00 AM",
     completion: 52,
-    color: "bg-yellow-100 text-yellow-800"
+    color: "bg-blue-100 text-blue-800"
   },
 ];
 
@@ -62,7 +62,7 @@ const SubjectPage = () => {
       ...newSubject,
       nextClass: "Not scheduled",
       completion: 0,
-      color: "bg-gray-100 text-gray-800"
+      color: "bg-blue-100 text-blue-800"
     };
     setSubjects([...subjects, subject]);
     setIsAddModalOpen(false);
@@ -111,8 +111,8 @@ const SubjectPage = () => {
                 {subjects.reduce((sum, s) => sum + s.students, 0)}
               </p>
             </div>
-            <div className="p-3 rounded-full bg-green-100">
-              <Users className="text-green-500" size={24} />
+            <div className="p-3 rounded-full bg-blue-100">
+              <Users className="text-blue-500" size={24} />
             </div>
           </div>
         </div>
@@ -124,8 +124,8 @@ const SubjectPage = () => {
                 {subjects.reduce((sum, s) => sum + s.topics, 0)}
               </p>
             </div>
-            <div className="p-3 rounded-full bg-yellow-100">
-              <FileText className="text-yellow-500" size={24} />
+            <div className="p-3 rounded-full bg-blue-100">
+              <FileText className="text-blue-500" size={24} />
             </div>
           </div>
         </div>
@@ -137,8 +137,8 @@ const SubjectPage = () => {
                 {Math.round(subjects.reduce((sum, s) => sum + s.completion, 0) / subjects.length)}%
               </p>
             </div>
-            <div className="p-3 rounded-full bg-purple-100">
-              <TrendingUp className="text-purple-500" size={24} />
+            <div className="p-3 rounded-full bg-blue-100">
+              <TrendingUp className="text-blue-500" size={24} />
             </div>
           </div>
         </div>
@@ -161,7 +161,7 @@ const SubjectPage = () => {
                 </button>
                 <button
                   onClick={() => handleDeleteSubject(subject.id)}
-                  className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                  className="p-2 text-blue-500 hover:bg-red-50 rounded-lg transition-colors"
                 >
                   <Trash size={16} />
                 </button>

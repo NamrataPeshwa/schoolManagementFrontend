@@ -18,7 +18,7 @@ const HomePage = () => {
   return (
     <div className="space-y-6">
       {/* Welcome Banner */}
-      <div className="flex flex-col md:flex-row items-center justify-between p-6 bg-gradient-to-r from-blue-50 to-green-50 rounded-lg">
+      <div className="flex flex-col md:flex-row items-center justify-between p-6 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg">
         <div>
           <h2 className="text-2xl font-bold text-gray-800">Welcome back, Teacher!</h2>
           <p className="text-gray-600">Let's make today awesome. A step towards a bright future....</p>
@@ -41,13 +41,13 @@ const HomePage = () => {
           title="Pending Assignments"
           value={stats ? stats.pendingAssignments : "..."}
           icon={ClipboardCheck}
-          color="text-yellow-500"
+          color="text-blue-500"
         />
         <StatCard
           title="Class Attendance"
           value={stats ? `${stats.classAttendance}%` : "..."}
           icon={BarChart3}
-          color="text-green-500"
+          color="text-blue-500"
         />
         <StatCard
           title="Average Class GPA"
