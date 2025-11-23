@@ -9,7 +9,6 @@ const ReportCardPage = () => {
   const [logoUrl, setLogoUrl] = useState('');
   const [showPreview, setShowPreview] = useState(false);
 
-  // Form state for report generation
   const [formData, setFormData] = useState({
     studentId: '',
     studentName: '',
@@ -18,7 +17,6 @@ const ReportCardPage = () => {
     universityName: 'MIT International School',
   });
 
-  // Subject marks state
   const [subjects, setSubjects] = useState([
     { id: 1, name: 'Mathematics', maxMarks: 100, minMarks: 35, obtained: 0 },
     { id: 2, name: 'Science', maxMarks: 100, minMarks: 35, obtained: 0 },
@@ -27,7 +25,6 @@ const ReportCardPage = () => {
     { id: 5, name: 'Hindi', maxMarks: 100, minMarks: 35, obtained: 0 },
   ]);
 
-  // Handle form input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -36,7 +33,6 @@ const ReportCardPage = () => {
     }));
   };
 
-  // Handle subject changes with validation
   const handleSubjectChange = (id, field, value) => {
     setSubjects((prev) =>
       prev.map((subject) => {
@@ -44,18 +40,14 @@ const ReportCardPage = () => {
           if (field === 'name') {
             return { ...subject, name: value };
           }
-
           const numValue = parseFloat(value) || 0;
-
           if (field === 'maxMarks') {
             const newObtained = numValue < subject.obtained ? numValue : subject.obtained;
             return { ...subject, maxMarks: numValue, obtained: newObtained };
           }
-
           if (field === 'minMarks') {
             return { ...subject, minMarks: numValue };
           }
-
           if (field === 'obtained') {
             const validObtained = numValue > subject.maxMarks ? subject.maxMarks : numValue;
             return { ...subject, obtained: validObtained };
@@ -66,7 +58,6 @@ const ReportCardPage = () => {
     );
   };
 
-  // Add new subject
   const addSubject = () => {
     const newId = subjects.length > 0 ? Math.max(...subjects.map((s) => s.id)) + 1 : 1;
     setSubjects((prev) => [
@@ -75,20 +66,17 @@ const ReportCardPage = () => {
     ]);
   };
 
-  // Remove subject
   const removeSubject = (id) => {
     if (subjects.length > 1) {
       setSubjects((prev) => prev.filter((subject) => subject.id !== id));
     }
   };
 
-  // Calculate percentage for a subject
   const calculatePercentage = (obtained, maxMarks) => {
     if (maxMarks === 0) return 0;
     return ((obtained / maxMarks) * 100).toFixed(2);
   };
 
-  // Calculate grade based on percentage
   const calculateGrade = (percentage) => {
     if (percentage >= 90) return 'A+';
     if (percentage >= 80) return 'A';
@@ -100,7 +88,6 @@ const ReportCardPage = () => {
     return 'F';
   };
 
-  // Calculate GPA on 5.0 scale
   const calculateGPA = () => {
     let totalGradePoints = 0;
     let totalSubjects = subjects.length;
@@ -124,7 +111,6 @@ const ReportCardPage = () => {
     return totalSubjects > 0 ? (totalGradePoints / totalSubjects).toFixed(2) : 0.0;
   };
 
-  // Calculate total marks
   const calculateTotals = () => {
     const totalObtained = subjects.reduce((sum, sub) => sum + sub.obtained, 0);
     const totalMax = subjects.reduce((sum, sub) => sum + sub.maxMarks, 0);
@@ -133,7 +119,6 @@ const ReportCardPage = () => {
     return { totalObtained, totalMax, percentage };
   };
 
-  // Convert image URL to base64
   const getBase64Image = (url) => {
     return new Promise((resolve, reject) => {
       const img = new Image();
@@ -154,7 +139,6 @@ const ReportCardPage = () => {
     });
   };
 
-  // Generate Advanced Professional Report Card with Logo
   const generatePDF = async () => {
     setShowPreview(false);
     if (!formData.studentId || !formData.studentName) {
@@ -168,10 +152,8 @@ const ReportCardPage = () => {
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
 
-    // ========== PROFESSIONAL LETTERHEAD HEADER ==========
     doc.setFillColor(47, 105, 255);
     doc.rect(0, 0, pageWidth, 4, 'F');
-
     doc.setFillColor(250, 251, 255);
     doc.rect(0, 4, pageWidth, 42, 'F');
 
@@ -179,8 +161,7 @@ const ReportCardPage = () => {
       try {
         const logoData = await getBase64Image(logoUrl);
         doc.addImage(logoData, 'PNG', 12, 12, 16, 16);
-      } catch (error) {
-        console.error('Logo loading failed:', error);
+      } catch {
         doc.setFillColor(47, 105, 255);
         doc.circle(20, 20, 8, 'F');
         doc.setTextColor(255, 255, 255);
@@ -217,7 +198,6 @@ const ReportCardPage = () => {
     doc.setLineWidth(0.5);
     doc.line(0, 46, pageWidth, 46);
 
-    // ========== DOCUMENT INFO BAR ==========
     doc.setFillColor(241, 245, 249);
     doc.rect(0, 46, pageWidth, 10, 'F');
 
@@ -228,7 +208,6 @@ const ReportCardPage = () => {
     doc.text(`Academic Year: ${formData.academicYear}`, pageWidth / 2, 52, { align: 'center' });
     doc.text(`Issue Date: ${new Date().toLocaleDateString('en-US')}`, pageWidth - 15, 52, { align: 'right' });
 
-    // ========== STUDENT INFORMATION SECTION ==========
     doc.setFontSize(11);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(30, 41, 59);
@@ -270,7 +249,6 @@ const ReportCardPage = () => {
     doc.text('Academic Office', pageWidth / 2 + 35, 85);
     doc.text('Expected: June 2026', pageWidth / 2 + 35, 92);
 
-    // ========== ACADEMIC PERFORMANCE SECTION ==========
     doc.setFontSize(11);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(30, 41, 59);
@@ -362,7 +340,6 @@ const ReportCardPage = () => {
       },
     });
 
-    // ========== ACADEMIC SUMMARY SECTION ==========
     const summaryY = doc.lastAutoTable.finalY + 10;
 
     doc.setFontSize(11);
@@ -458,7 +435,6 @@ const ReportCardPage = () => {
       gradeX += 22;
     });
 
-    // ========== REMARKS SECTION ==========
     const remarkY = gradeY + 26;
 
     doc.setFontSize(10);
@@ -490,7 +466,6 @@ const ReportCardPage = () => {
     doc.text(remark, 18, remarkY + 9);
     doc.text('This transcript is valid only with official seal and authorized signature.', 18, remarkY + 14);
 
-    // ========== CERTIFICATION FOOTER ==========
     const footerY = pageHeight - 28;
 
     doc.setDrawColor(226, 232, 240);
@@ -524,12 +499,9 @@ const ReportCardPage = () => {
 
     doc.save(`${formData.studentId}.pdf`);
 
-    alert(
-      ` Official academic transcript generated successfully!\n\nStudent: ${formData.studentName}\nGPA: ${gpa}/5.0\nStatus: ${perfStatus}`
-    );
+    alert(` Official academic transcript generated successfully!\n\nStudent: ${formData.studentName}\nGPA: ${gpa}/5.0\nStatus: ${perfStatus}`);
   };
 
-  // Handle file upload
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (file && file.type === 'application/pdf') {
@@ -540,7 +512,6 @@ const ReportCardPage = () => {
     }
   };
 
-  // Download uploaded file
   const downloadUploadedFile = () => {
     if (uploadedFile) {
       const url = URL.createObjectURL(uploadedFile);
@@ -554,9 +525,6 @@ const ReportCardPage = () => {
     }
   };
 
-  // ------------------------------------------
-  // Report Preview Modal Component
-  // ------------------------------------------
   const ReportPreview = () => {
     const { totalObtained, totalMax, percentage } = calculateTotals();
     const gpa = calculateGPA();
@@ -571,12 +539,11 @@ const ReportCardPage = () => {
           >
             &times;
           </button>
-
           <div className="mb-4 flex items-center gap-4">
             {logoUrl ? (
               <img src={logoUrl} alt="Logo" className="w-12 h-12 rounded" onError={(e) => (e.target.style.display = 'none')} />
             ) : (
-              <div className="w-12 h-12 bg-blue-200 rounded-full flex items-center justify-center text-2xl font-bold text-blue-800 ">
+              <div className="w-12 h-12 bg-blue-200 rounded-full flex items-center justify-center text-2xl font-bold text-blue-800">
                 {formData.universityName?.[0] || 'U'}
               </div>
             )}
@@ -585,7 +552,6 @@ const ReportCardPage = () => {
               <p className="text-sm text-gray-600">{formData.academicYear}</p>
             </div>
           </div>
-
           <h3 className="font-semibold text-lg mb-2">Student Details</h3>
           <div className="grid grid-cols-2 gap-4 text-sm mb-4">
             <div>
@@ -601,7 +567,6 @@ const ReportCardPage = () => {
               <span className="font-medium">Academic Year:</span> {formData.academicYear}
             </div>
           </div>
-
           <h3 className="font-semibold text-lg mb-2">Subjects / Grades</h3>
           <div className="overflow-x-auto mb-4">
             <table className="min-w-full text-xs border">
@@ -610,7 +575,7 @@ const ReportCardPage = () => {
                   <th className="px-2 py-2 border">Subject</th>
                   <th className="px-2 py-2 border">Max</th>
                   <th className="px-2 py-2 border">Obtained</th>
-                  <th className="px-2 py-2 border"> Percentage %</th>
+                  <th className="px-2 py-2 border">%</th>
                   <th className="px-2 py-2 border">Grade</th>
                 </tr>
               </thead>
@@ -631,33 +596,19 @@ const ReportCardPage = () => {
               </tbody>
             </table>
           </div>
-
           <div className="grid grid-cols-2 gap-4 mb-4 p-3 bg-blue-50 rounded-lg">
             <div>
               <div className="text-sm text-gray-600">Total Obtained</div>
-              <div className="font-bold text-[#2F69FF] text-lg">
-                {totalObtained} / {totalMax}
-              </div>
+              <div className="font-bold text-[#2F69FF] text-lg">{totalObtained} / {totalMax}</div>
             </div>
             <div>
               <div className="text-sm text-gray-600">Overall % / GPA</div>
-              <div className="font-bold text-[#2F69FF] text-lg">
-                {percentage}% &nbsp; | &nbsp; {gpa} / 5.0
-              </div>
+              <div className="font-bold text-[#2F69FF] text-lg">{percentage}% &nbsp; | &nbsp; {gpa} / 5.0</div>
             </div>
           </div>
-
           <div className="flex justify-end gap-3 mt-6">
-            <button
-              onClick={() => setShowPreview(false)}
-              className="px-4 py-2 rounded-lg border bg-white text-gray-700 hover:bg-gray-100"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={generatePDF}
-              className="px-6 py-2 rounded-lg bg-gradient-to-r from-[#2F69FF] to-blue-700 text-white font-semibold flex items-center gap-2 shadow hover:scale-105 transition"
-            >
+            <button onClick={() => setShowPreview(false)} className="px-4 py-2 rounded-lg border bg-white text-gray-700 hover:bg-gray-100">Cancel</button>
+            <button onClick={generatePDF} className="px-6 py-2 rounded-lg bg-gradient-to-r from-[#2F69FF] to-blue-700 text-white font-semibold flex items-center gap-2 shadow hover:scale-105 transition">
               <Download size={18} /> Generate PDF
             </button>
           </div>
@@ -668,99 +619,38 @@ const ReportCardPage = () => {
 
   return (
     <div className="space-y-6">
-      {/* Preview Modal */}
       {showPreview && <ReportPreview />}
-
-      {/* Tab Selection */}
       <div className="p-6 bg-white rounded-3xl shadow-sm">
         <div className="flex gap-4 border-b border-gray-200">
-          <button
-            onClick={() => setActiveTab('generate')}
-            className={`pb-3 px-4 font-semibold transition-all ${
-              activeTab === 'generate'
-                ? 'border-b-2 border-[#2F69FF] text-[#2F69FF]'
-                : 'text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            <FileText className="inline-block mr-2" size={18} />
-            Generate Report Card
+          <button onClick={() => setActiveTab('generate')} className={`pb-3 px-4 font-semibold transition-all ${activeTab === 'generate' ? 'border-b-2 border-[#2F69FF] text-[#2F69FF]' : 'text-gray-500 hover:text-gray-700'}`}>
+            <FileText className="inline-block mr-2" size={18} /> Generate Report Card
           </button>
-          <button
-            onClick={() => setActiveTab('upload')}
-            className={`pb-3 px-4 font-semibold transition-all ${
-              activeTab === 'upload'
-                ? 'border-b-2 border-[#2F69FF] text-[#2F69FF]'
-                : 'text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            <Upload className="inline-block mr-2" size={18} />
-            Upload Report Card
+          <button onClick={() => setActiveTab('upload')} className={`pb-3 px-4 font-semibold transition-all ${activeTab === 'upload' ? 'border-b-2 border-[#2F69FF] text-[#2F69FF]' : 'text-gray-500 hover:text-gray-700'}`}>
+            <Upload className="inline-block mr-2" size={18} /> Upload Report Card
           </button>
         </div>
       </div>
 
-      {/* Generate Report Card Tab */}
       {activeTab === 'generate' && (
         <div className="space-y-6">
-          {/* Basic Information */}
           <div className="p-6 bg-white rounded-3xl shadow-sm">
             <h3 className="text-lg font-semibold mb-4">Student & School Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Student ID 
-                </label>
-                <input
-                  type="text"
-                  name="studentId"
-                  value={formData.studentId}
-                  onChange={handleInputChange}
-                  placeholder="e.g., STU2024001"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF] focus:border-transparent outline-none"
-                  required
-                />
+                <label className="block text-sm font-medium text-gray-700 mb-2">Student ID </label>
+                <input type="text" name="studentId" value={formData.studentId} onChange={handleInputChange} placeholder="e.g., STU2024001" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF] focus:border-transparent outline-none" required />
               </div>
-
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Student Name 
-                </label>
-                <input
-                  type="text"
-                  name="studentName"
-                  value={formData.studentName}
-                  onChange={handleInputChange}
-                  placeholder="e.g., Raghav M J"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF] focus:border-transparent outline-none"
-                  required
-                />
+                <label className="block text-sm font-medium text-gray-700 mb-2">Student Name </label>
+                <input type="text" name="studentName" value={formData.studentName} onChange={handleInputChange} placeholder="e.g., Raghav M J" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF] focus:border-transparent outline-none" required />
               </div>
-
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  University/School Name 
-                </label>
-                <input
-                  type="text"
-                  name="universityName"
-                  value={formData.universityName}
-                  onChange={handleInputChange}
-                  placeholder="e.g., MIT School"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF] focus:border-transparent outline-none"
-                  required
-                />
+                <label className="block text-sm font-medium text-gray-700 mb-2">University/School Name </label>
+                <input type="text" name="universityName" value={formData.universityName} onChange={handleInputChange} placeholder="e.g., MIT School" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF] focus:border-transparent outline-none" required />
               </div>
-
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Class
-                </label>
-                <select
-                  name="className"
-                  value={formData.className}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF] focus:border-transparent outline-none"
-                >
+                <label className="block text-sm font-medium text-gray-700 mb-2">Class</label>
+                <select name="className" value={formData.className} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF] focus:border-transparent outline-none">
                   <option>Class 9</option>
                   <option>Class 8</option>
                   <option>Class 10</option>
@@ -768,49 +658,25 @@ const ReportCardPage = () => {
                   <option>Class 12</option>
                 </select>
               </div>
-
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Academic Year
-                </label>
-                <select
-                  name="academicYear"
-                  value={formData.academicYear}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF] focus:border-transparent outline-none"
-                >
+                <label className="block text-sm font-medium text-gray-700 mb-2">Academic Year</label>
+                <select name="academicYear" value={formData.academicYear} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF] focus:border-transparent outline-none">
                   <option>2024-2025</option>
                   <option>2023-2024</option>
                   <option>2022-2023</option>
                 </select>
               </div>
-
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  School Logo URL (Optional)
-                </label>
-                <input
-                  type="text"
-                  value={logoUrl}
-                  onChange={(e) => setLogoUrl(e.target.value)}
-                  placeholder="https://example.com/logo.png"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF] focus:border-transparent outline-none"
-                />
+                <label className="block text-sm font-medium text-gray-700 mb-2">School Logo URL (Optional)</label>
+                <input type="text" value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} placeholder="https://example.com/logo.png" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF] focus:border-transparent outline-none" />
                 <p className="text-xs text-gray-500 mt-1">Direct image URL (PNG, JPG)</p>
               </div>
             </div>
           </div>
-
-          {/* Subjects & Marks */}
           <div className="p-6 bg-white rounded-3xl shadow-sm">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold">Subject-wise Marks</h3>
-              <button
-                onClick={addSubject}
-                className="py-2 px-4 bg-blue-500 text-white font-medium rounded-3xl hover:bg-blue-600 transition"
-              >
-                Add Subject
-              </button>
+              <button onClick={addSubject} className="py-2 px-4 bg-blue-500 text-white font-medium rounded-3xl hover:bg-blue-600 transition">Add Subject</button>
             </div>
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
@@ -829,63 +695,25 @@ const ReportCardPage = () => {
                   {subjects.map((subject) => {
                     const percentage = calculatePercentage(subject.obtained, subject.maxMarks);
                     const grade = calculateGrade(percentage);
-
                     return (
                       <tr key={subject.id}>
                         <td className="px-4 py-3">
-                          <input
-                            type="text"
-                            value={subject.name}
-                            onChange={(e) => handleSubjectChange(subject.id, 'name', e.target.value)}
-                            placeholder="Subject Name"
-                            className="w-full px-3 py-1 border border-gray-300 rounded-3xl focus:ring-1 focus:ring-[#2F69FF] outline-none"
-                          />
+                          <input type="text" value={subject.name} onChange={(e) => handleSubjectChange(subject.id, 'name', e.target.value)} placeholder="Subject Name" className="w-full px-3 py-1 border border-gray-300 rounded-3xl focus:ring-1 focus:ring-[#2F69FF] outline-none" />
                         </td>
                         <td className="px-4 py-3">
-                          <input
-                            type="number"
-                            value={subject.maxMarks}
-                            onChange={(e) => handleSubjectChange(subject.id, 'maxMarks', e.target.value)}
-                            className="w-20 px-3 py-1 ml-10 border border-gray-300 rounded-3xl text-center focus:ring-1 focus:ring-[#2F69FF] outline-none"
-                            min="0"
-                          />
+                          <input type="number" value={subject.maxMarks} onChange={(e) => handleSubjectChange(subject.id, 'maxMarks', e.target.value)} className="w-20 px-3 py-1 ml-10 border border-gray-300 rounded-3xl text-center focus:ring-1 focus:ring-[#2F69FF] outline-none" min="0" />
                         </td>
                         <td className="px-4 py-3">
-                          <input
-                            type="number"
-                            value={subject.minMarks}
-                            onChange={(e) => handleSubjectChange(subject.id, 'minMarks', e.target.value)}
-                            className="w-20 px-3 py-1 ml-10 border border-gray-300 rounded-3xl text-center focus:ring-1 focus:ring-[#2F69FF] outline-none"
-                            min="0"
-                          />
+                          <input type="number" value={subject.minMarks} onChange={(e) => handleSubjectChange(subject.id, 'minMarks', e.target.value)} className="w-20 px-3 py-1 ml-10 border border-gray-300 rounded-3xl text-center focus:ring-1 focus:ring-[#2F69FF] outline-none" min="0" />
                         </td>
                         <td className="px-4 py-3">
-                          <input
-                            type="number"
-                            value={subject.obtained}
-                            onChange={(e) => handleSubjectChange(subject.id, 'obtained', e.target.value)}
-                            className="w-20 px-3 py-1 ml-12 border border-gray-300 rounded-3xl text-center focus:ring-1 focus:ring-[#2F69FF] outline-none"
-                            min="0"
-                            max={subject.maxMarks}
-                          />
-                          {subject.obtained > subject.maxMarks && (
-                            <p className="text-xs text-red-500 mt-1">Max: {subject.maxMarks}</p>
-                          )}
+                          <input type="number" value={subject.obtained} onChange={(e) => handleSubjectChange(subject.id, 'obtained', e.target.value)} className="w-20 px-3 py-1 ml-12 border border-gray-300 rounded-3xl text-center focus:ring-1 focus:ring-[#2F69FF] outline-none" min="0" max={subject.maxMarks} />
+                          {subject.obtained > subject.maxMarks && (<p className="text-xs text-red-500 mt-1">Max: {subject.maxMarks}</p>)}
                         </td>
-                        <td className="px-4 py-3 text-center text-sm font-medium text-gray-700">
-                          {percentage}%
-                        </td>
-                        <td className="px-4 py-3 text-center text-sm font-bold text-gray-800">
-                          {grade}
-                        </td>
+                        <td className="px-4 py-3 text-center text-sm font-medium text-gray-700">{percentage}%</td>
+                        <td className="px-4 py-3 text-center text-sm font-bold text-gray-800">{grade}</td>
                         <td className="px-4 py-3 text-center">
-                          <button
-                            onClick={() => removeSubject(subject.id)}
-                            className="text-blue-600 hover:text-blue-800 font-medium"
-                            disabled={subjects.length === 1}
-                          >
-                            Remove
-                          </button>
+                          <button onClick={() => removeSubject(subject.id)} className="text-blue-600 hover:text-blue-800 font-medium" disabled={subjects.length === 1}>Remove</button>
                         </td>
                       </tr>
                     );
@@ -893,38 +721,26 @@ const ReportCardPage = () => {
                 </tbody>
               </table>
             </div>
-
             <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <p className="text-sm text-gray-600 ml-2">Total Marks Obtained</p>
-                  <p className="text-2xl font-bold text-[#2F69FF] ml-5">
-                    {calculateTotals().totalObtained} / {calculateTotals().totalMax}
-                  </p>
+                  <p className="text-2xl font-bold text-[#2F69FF] ml-5">{calculateTotals().totalObtained} / {calculateTotals().totalMax}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600 ml-10">Overall Percentage</p>
-                  <p className="text-2xl font-bold text-[#2F69FF] ml-14">
-                    {calculateTotals().percentage}%
-                  </p>
+                  <p className="text-2xl font-bold text-[#2F69FF] ml-14">{calculateTotals().percentage}%</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600 ml-20">GPA (5.0 Scale)</p>
-                  <p className="text-2xl font-bold text-blue-600 ml-20">
-                    {calculateGPA()} / 5.0
-                  </p>
+                  <p className="text-2xl font-bold text-blue-600 ml-20">{calculateGPA()} / 5.0</p>
                 </div>
               </div>
             </div>
           </div>
-
           <div className="flex gap-4 justify-center">
-            <button
-              onClick={() => setShowPreview(true)}
-              className="py-3 px-6 bg-gradient-to-r from-[#2F69FF] to-[#1e4fd9] text-white font-semibold rounded-3xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center gap-2"
-            >
-              <Eye size={20} />
-              View Report
+            <button onClick={() => setShowPreview(true)} className="py-3 px-6 bg-gradient-to-r from-[#2F69FF] to-[#1e4fd9] text-white font-semibold rounded-3xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center gap-2">
+              <Eye size={20} /> View Report
             </button>
           </div>
         </div>
@@ -937,15 +753,8 @@ const ReportCardPage = () => {
             <Upload className="mx-auto mb-4 text-gray-400" size={48} />
             <p className="text-gray-600 mb-4">Upload a PDF report card file</p>
             <label className="inline-block">
-              <input
-                type="file"
-                accept=".pdf"
-                onChange={handleFileUpload}
-                className="hidden"
-              />
-              <span className="py-2 px-6 bg-[#2F69FF] text-white font-medium rounded-3xl cursor-pointer hover:bg-blue-700 inline-block">
-                Choose File
-              </span>
+              <input type="file" accept=".pdf" onChange={handleFileUpload} className="hidden" />
+              <span className="py-2 px-6 bg-[#2F69FF] text-white font-medium rounded-3xl cursor-pointer hover:bg-blue-700 inline-block">Choose File</span>
             </label>
           </div>
           {uploadedFile && (
@@ -955,17 +764,11 @@ const ReportCardPage = () => {
                   <FileText className="text-blue-600" size={24} />
                   <div>
                     <p className="font-semibold text-gray-800">{uploadedFile.name}</p>
-                    <p className="text-sm text-gray-600">
-                      {(uploadedFile.size / 1024).toFixed(2)} KB
-                    </p>
+                    <p className="text-sm text-gray-600">{(uploadedFile.size / 1024).toFixed(2)} KB</p>
                   </div>
                 </div>
-                <button
-                  onClick={downloadUploadedFile}
-                  className="py-2 px-4 bg-[#2F69FF] text-white font-medium rounded-3xl hover:bg-blue-700 flex items-center gap-2"
-                >
-                  <Download size={18} />
-                  Download
+                <button onClick={downloadUploadedFile} className="py-2 px-4 bg-[#2F69FF] text-white font-medium rounded-3xl hover:bg-blue-700 flex items-center gap-2">
+                  <Download size={18} /> Download
                 </button>
               </div>
             </div>
