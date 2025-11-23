@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Upload, Download, FileText } from 'lucide-react';
+import { Upload, Download, FileText, Eye } from 'lucide-react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
@@ -7,7 +7,9 @@ const ReportCardPage = () => {
   const [activeTab, setActiveTab] = useState('generate');
   const [uploadedFile, setUploadedFile] = useState(null);
   const [logoUrl, setLogoUrl] = useState('');
+  const [showPreview, setShowPreview] = useState(false);
 
+  // Form state for report generation
   const [formData, setFormData] = useState({
     studentId: '',
     studentName: '',
@@ -16,6 +18,7 @@ const ReportCardPage = () => {
     universityName: 'MIT International School',
   });
 
+  // Subject marks state
   const [subjects, setSubjects] = useState([
     { id: 1, name: 'Mathematics', maxMarks: 100, minMarks: 35, obtained: 0 },
     { id: 2, name: 'Science', maxMarks: 100, minMarks: 35, obtained: 0 },
@@ -24,47 +27,68 @@ const ReportCardPage = () => {
     { id: 5, name: 'Hindi', maxMarks: 100, minMarks: 35, obtained: 0 },
   ]);
 
+  // Handle form input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubjectChange = (id, field, value) => {
-    setSubjects(prev => prev.map(subject => {
-      if (subject.id === id) {
-        if (field === 'name') return { ...subject, name: value };
-        const numValue = parseFloat(value) || 0;
-
-        if (field === 'maxMarks') {
-          const newObtained = numValue < subject.obtained ? numValue : subject.obtained;
-          return { ...subject, maxMarks: numValue, obtained: newObtained };
-        }
-        if (field === 'minMarks') return { ...subject, minMarks: numValue };
-        if (field === 'obtained') {
-          const validObtained = numValue > subject.maxMarks ? subject.maxMarks : numValue;
-          return { ...subject, obtained: validObtained };
-        }
-      }
-      return subject;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
     }));
   };
 
-  const addSubject = () => {
-    const newId = subjects.length > 0 ? Math.max(...subjects.map(s => s.id)) + 1 : 1;
-    setSubjects(prev => [...prev, { id: newId, name: '', maxMarks: 100, minMarks: 35, obtained: 0 }]);
+  // Handle subject changes with validation
+  const handleSubjectChange = (id, field, value) => {
+    setSubjects((prev) =>
+      prev.map((subject) => {
+        if (subject.id === id) {
+          if (field === 'name') {
+            return { ...subject, name: value };
+          }
+
+          const numValue = parseFloat(value) || 0;
+
+          if (field === 'maxMarks') {
+            const newObtained = numValue < subject.obtained ? numValue : subject.obtained;
+            return { ...subject, maxMarks: numValue, obtained: newObtained };
+          }
+
+          if (field === 'minMarks') {
+            return { ...subject, minMarks: numValue };
+          }
+
+          if (field === 'obtained') {
+            const validObtained = numValue > subject.maxMarks ? subject.maxMarks : numValue;
+            return { ...subject, obtained: validObtained };
+          }
+        }
+        return subject;
+      })
+    );
   };
 
+  // Add new subject
+  const addSubject = () => {
+    const newId = subjects.length > 0 ? Math.max(...subjects.map((s) => s.id)) + 1 : 1;
+    setSubjects((prev) => [
+      ...prev,
+      { id: newId, name: '', maxMarks: 100, minMarks: 35, obtained: 0 },
+    ]);
+  };
+
+  // Remove subject
   const removeSubject = (id) => {
     if (subjects.length > 1) {
-      setSubjects(prev => prev.filter(subject => subject.id !== id));
+      setSubjects((prev) => prev.filter((subject) => subject.id !== id));
     }
   };
 
+  // Calculate percentage for a subject
   const calculatePercentage = (obtained, maxMarks) => {
     if (maxMarks === 0) return 0;
     return ((obtained / maxMarks) * 100).toFixed(2);
   };
 
+  // Calculate grade based on percentage
   const calculateGrade = (percentage) => {
     if (percentage >= 90) return 'A+';
     if (percentage >= 80) return 'A';
@@ -76,11 +100,12 @@ const ReportCardPage = () => {
     return 'F';
   };
 
+  // Calculate GPA on 5.0 scale
   const calculateGPA = () => {
     let totalGradePoints = 0;
     let totalSubjects = subjects.length;
 
-    subjects.forEach(subject => {
+    subjects.forEach((subject) => {
       const percentage = parseFloat(calculatePercentage(subject.obtained, subject.maxMarks));
       let gradePoint = 0;
 
@@ -99,13 +124,16 @@ const ReportCardPage = () => {
     return totalSubjects > 0 ? (totalGradePoints / totalSubjects).toFixed(2) : 0.0;
   };
 
+  // Calculate total marks
   const calculateTotals = () => {
     const totalObtained = subjects.reduce((sum, sub) => sum + sub.obtained, 0);
     const totalMax = subjects.reduce((sum, sub) => sum + sub.maxMarks, 0);
     const percentage = totalMax > 0 ? ((totalObtained / totalMax) * 100).toFixed(2) : 0;
+
     return { totalObtained, totalMax, percentage };
   };
 
+  // Convert image URL to base64
   const getBase64Image = (url) => {
     return new Promise((resolve, reject) => {
       const img = new Image();
@@ -126,7 +154,9 @@ const ReportCardPage = () => {
     });
   };
 
+  // Generate Advanced Professional Report Card with Logo
   const generatePDF = async () => {
+    setShowPreview(false);
     if (!formData.studentId || !formData.studentName) {
       alert('Please enter Student ID and Name');
       return;
@@ -138,6 +168,7 @@ const ReportCardPage = () => {
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
 
+    // ========== PROFESSIONAL LETTERHEAD HEADER ==========
     doc.setFillColor(47, 105, 255);
     doc.rect(0, 0, pageWidth, 4, 'F');
 
@@ -148,7 +179,8 @@ const ReportCardPage = () => {
       try {
         const logoData = await getBase64Image(logoUrl);
         doc.addImage(logoData, 'PNG', 12, 12, 16, 16);
-      } catch {
+      } catch (error) {
+        console.error('Logo loading failed:', error);
         doc.setFillColor(47, 105, 255);
         doc.circle(20, 20, 8, 'F');
         doc.setTextColor(255, 255, 255);
@@ -185,6 +217,7 @@ const ReportCardPage = () => {
     doc.setLineWidth(0.5);
     doc.line(0, 46, pageWidth, 46);
 
+    // ========== DOCUMENT INFO BAR ==========
     doc.setFillColor(241, 245, 249);
     doc.rect(0, 46, pageWidth, 10, 'F');
 
@@ -195,6 +228,7 @@ const ReportCardPage = () => {
     doc.text(`Academic Year: ${formData.academicYear}`, pageWidth / 2, 52, { align: 'center' });
     doc.text(`Issue Date: ${new Date().toLocaleDateString('en-US')}`, pageWidth - 15, 52, { align: 'right' });
 
+    // ========== STUDENT INFORMATION SECTION ==========
     doc.setFontSize(11);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(30, 41, 59);
@@ -212,6 +246,7 @@ const ReportCardPage = () => {
     doc.setFontSize(8);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(71, 85, 105);
+
     doc.text('Student Name', 18, 71);
     doc.text('Student ID', 18, 78);
     doc.text('Grade Level', 18, 85);
@@ -224,6 +259,7 @@ const ReportCardPage = () => {
 
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(30, 41, 59);
+
     doc.text(formData.studentName, 50, 71);
     doc.text(formData.studentId, 50, 78);
     doc.text(formData.className, 50, 85);
@@ -234,32 +270,14 @@ const ReportCardPage = () => {
     doc.text('Academic Office', pageWidth / 2 + 35, 85);
     doc.text('Expected: June 2026', pageWidth / 2 + 35, 92);
 
+    // ========== ACADEMIC PERFORMANCE SECTION ==========
     doc.setFontSize(11);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(30, 41, 59);
     doc.text('ACADEMIC PERFORMANCE RECORD', 15, 106);
 
-    const perfStatus =
-      percentage >= 90
-        ? 'EXCELLENT'
-        : percentage >= 80
-        ? 'VERY GOOD'
-        : percentage >= 70
-        ? 'GOOD'
-        : percentage >= 60
-        ? 'SATISFACTORY'
-        : 'NEEDS IMPROVEMENT';
-
-    const perfColor =
-      percentage >= 90
-        ? [34, 197, 94]
-        : percentage >= 80
-        ? [59, 130, 246]
-        : percentage >= 70
-        ? [139, 92, 246]
-        : percentage >= 60
-        ? [251, 146, 60]
-        : [239, 68, 68];
+    const perfStatus = percentage >= 90 ? 'EXCELLENT' : percentage >= 80 ? 'VERY GOOD' : percentage >= 70 ? 'GOOD' : percentage >= 60 ? 'SATISFACTORY' : 'NEEDS IMPROVEMENT';
+    const perfColor = percentage >= 90 ? [34, 197, 94] : percentage >= 80 ? [59, 130, 246] : percentage >= 70 ? [139, 92, 246] : percentage >= 60 ? [251, 146, 60] : [239, 68, 68];
 
     doc.setFillColor(...perfColor);
     doc.roundedRect(pageWidth - 65, 100, 50, 8, 2, 2, 'F');
@@ -329,15 +347,22 @@ const ReportCardPage = () => {
       didParseCell: function (data) {
         if (data.column.index === 5 && data.section === 'body') {
           const grade = data.cell.text[0];
-          if (grade === 'A+' || grade === 'A') data.cell.styles.textColor = [34, 197, 94];
-          else if (grade === 'B+' || grade === 'B') data.cell.styles.textColor = [59, 130, 246];
-          else if (grade === 'C+' || grade === 'C') data.cell.styles.textColor = [251, 146, 60];
-          else if (grade === 'D') data.cell.styles.textColor = [156, 163, 175];
-          else data.cell.styles.textColor = [239, 68, 68];
+          if (grade === 'A+' || grade === 'A') {
+            data.cell.styles.textColor = [34, 197, 94];
+          } else if (grade === 'B+' || grade === 'B') {
+            data.cell.styles.textColor = [59, 130, 246];
+          } else if (grade === 'C+' || grade === 'C') {
+            data.cell.styles.textColor = [251, 146, 60];
+          } else if (grade === 'D') {
+            data.cell.styles.textColor = [156, 163, 175];
+          } else {
+            data.cell.styles.textColor = [239, 68, 68];
+          }
         }
       },
     });
 
+    // ========== ACADEMIC SUMMARY SECTION ==========
     const summaryY = doc.lastAutoTable.finalY + 10;
 
     doc.setFontSize(11);
@@ -351,7 +376,7 @@ const ReportCardPage = () => {
 
     const col1 = 15 + (pageWidth - 30) / 4;
     const col2 = 15 + (pageWidth - 30) / 2;
-    const col3 = 15 + 3 * (pageWidth - 30) / 4;
+    const col3 = 15 + (3 * (pageWidth - 30)) / 4;
 
     doc.line(col1, summaryY + 3, col1, summaryY + 31);
     doc.line(col2, summaryY + 3, col2, summaryY + 31);
@@ -360,17 +385,20 @@ const ReportCardPage = () => {
     doc.setFontSize(8);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(71, 85, 105);
+
     doc.text('Total Credits', (15 + col1) / 2, summaryY + 10, { align: 'center' });
     doc.text('Attempted', (15 + col1) / 2, summaryY + 14, { align: 'center' });
     doc.text('Total Credits', (col1 + col2) / 2, summaryY + 10, { align: 'center' });
     doc.text('Earned', (col1 + col2) / 2, summaryY + 14, { align: 'center' });
-    doc.text('Overall Percentage', (col2 + col3) / 2, summaryY + 10, { align: 'center' });
-    doc.text('Grade Point Average (GPA)', (col2 + col3) / 2, summaryY + 14, { align: 'center' });
-    doc.text('GPA', (col3 + pageWidth - 15) / 2, summaryY + 10, { align: 'center' });
+    doc.text('Overall', (col2 + col3) / 2, summaryY + 10, { align: 'center' });
+    doc.text('Percentage', (col2 + col3) / 2, summaryY + 14, { align: 'center' });
+    doc.text('Grade Point', (col3 + pageWidth - 15) / 2, summaryY + 10, { align: 'center' });
+    doc.text('Average (GPA)', (col3 + pageWidth - 15) / 2, summaryY + 14, { align: 'center' });
 
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(30, 41, 59);
+
     doc.text(totalMax.toString(), (15 + col1) / 2, summaryY + 23, { align: 'center' });
     doc.text(totalObtained.toString(), (col1 + col2) / 2, summaryY + 23, { align: 'center' });
 
@@ -417,16 +445,20 @@ const ReportCardPage = () => {
     grades.forEach((grade, index) => {
       doc.setFillColor(...gradeColors[index]);
       doc.roundedRect(gradeX, gradeY + 11, 5, 5, 0.8, 0.8, 'F');
+
       doc.setTextColor(30, 30, 30);
       doc.setFont('helvetica', 'bold');
       doc.text(grade, gradeX + 7, gradeY + 14);
+
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(6.5);
       doc.text(gradeRanges[index], gradeX + 7, gradeY + 18);
+
       doc.setFontSize(7.5);
       gradeX += 22;
     });
 
+    // ========== REMARKS SECTION ==========
     const remarkY = gradeY + 26;
 
     doc.setFontSize(10);
@@ -443,23 +475,22 @@ const ReportCardPage = () => {
     doc.setTextColor(71, 85, 105);
 
     let remark = '';
-    if (percentage >= 90)
+    if (percentage >= 90) {
       remark = 'Outstanding academic achievement. Student demonstrates exceptional mastery of all subjects.';
-    else if (percentage >= 80)
+    } else if (percentage >= 80) {
       remark = 'Excellent performance. Student shows strong understanding and consistent high achievement.';
-    else if (percentage >= 70)
+    } else if (percentage >= 70) {
       remark = 'Good academic progress. Student meets all learning standards with solid performance.';
-    else if (percentage >= 60)
+    } else if (percentage >= 60) {
       remark = 'Satisfactory achievement. Continued effort recommended to strengthen understanding.';
-    else remark = 'Additional support recommended. Student would benefit from focused intervention strategies.';
+    } else {
+      remark = 'Additional support recommended. Student would benefit from focused intervention strategies.';
+    }
 
     doc.text(remark, 18, remarkY + 9);
-    doc.text(
-      'This transcript is valid only with official seal and authorized signature.',
-      18,
-      remarkY + 14
-    );
+    doc.text('This transcript is valid only with official seal and authorized signature.', 18, remarkY + 14);
 
+    // ========== CERTIFICATION FOOTER ==========
     const footerY = pageHeight - 28;
 
     doc.setDrawColor(226, 232, 240);
@@ -494,10 +525,11 @@ const ReportCardPage = () => {
     doc.save(`${formData.studentId}.pdf`);
 
     alert(
-      `Official academic transcript generated successfully!\n\nStudent: ${formData.studentName}\nGPA: ${gpa}/5.0\nStatus: ${perfStatus}`
+      ` Official academic transcript generated successfully!\n\nStudent: ${formData.studentName}\nGPA: ${gpa}/5.0\nStatus: ${perfStatus}`
     );
   };
 
+  // Handle file upload
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (file && file.type === 'application/pdf') {
@@ -508,6 +540,7 @@ const ReportCardPage = () => {
     }
   };
 
+  // Download uploaded file
   const downloadUploadedFile = () => {
     if (uploadedFile) {
       const url = URL.createObjectURL(uploadedFile);
@@ -521,9 +554,125 @@ const ReportCardPage = () => {
     }
   };
 
+  // ------------------------------------------
+  // Report Preview Modal Component
+  // ------------------------------------------
+  const ReportPreview = () => {
+    const { totalObtained, totalMax, percentage } = calculateTotals();
+    const gpa = calculateGPA();
+
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30 z-40">
+        <div className="bg-white max-w-2xl w-full rounded-3xl shadow-lg border border-blue-100 p-8 relative max-h-96 overflow-y-auto">
+          <button
+            onClick={() => setShowPreview(false)}
+            className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl"
+            aria-label="Close"
+          >
+            &times;
+          </button>
+
+          <div className="mb-4 flex items-center gap-4">
+            {logoUrl ? (
+              <img src={logoUrl} alt="Logo" className="w-12 h-12 rounded" onError={(e) => (e.target.style.display = 'none')} />
+            ) : (
+              <div className="w-12 h-12 bg-blue-200 rounded-full flex items-center justify-center text-2xl font-bold text-blue-800 ">
+                {formData.universityName?.[0] || 'U'}
+              </div>
+            )}
+            <div>
+              <h2 className="text-xl font-bold text-[#2F69FF]">{formData.universityName}</h2>
+              <p className="text-sm text-gray-600">{formData.academicYear}</p>
+            </div>
+          </div>
+
+          <h3 className="font-semibold text-lg mb-2">Student Details</h3>
+          <div className="grid grid-cols-2 gap-4 text-sm mb-4">
+            <div>
+              <span className="font-medium">Name:</span> {formData.studentName}
+            </div>
+            <div>
+              <span className="font-medium">ID:</span> {formData.studentId}
+            </div>
+            <div>
+              <span className="font-medium">Class:</span> {formData.className}
+            </div>
+            <div>
+              <span className="font-medium">Academic Year:</span> {formData.academicYear}
+            </div>
+          </div>
+
+          <h3 className="font-semibold text-lg mb-2">Subjects / Grades</h3>
+          <div className="overflow-x-auto mb-4">
+            <table className="min-w-full text-xs border">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="px-2 py-2 border">Subject</th>
+                  <th className="px-2 py-2 border">Max</th>
+                  <th className="px-2 py-2 border">Obtained</th>
+                  <th className="px-2 py-2 border"> Percentage %</th>
+                  <th className="px-2 py-2 border">Grade</th>
+                </tr>
+              </thead>
+              <tbody>
+                {subjects.map((subj) => {
+                  const perc = calculatePercentage(subj.obtained, subj.maxMarks);
+                  const grade = calculateGrade(perc);
+                  return (
+                    <tr key={subj.id}>
+                      <td className="border px-2">{subj.name}</td>
+                      <td className="border px-2 text-center">{subj.maxMarks}</td>
+                      <td className="border px-2 text-center">{subj.obtained}</td>
+                      <td className="border px-2 text-center">{perc}%</td>
+                      <td className="border px-2 text-center font-bold">{grade}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 mb-4 p-3 bg-blue-50 rounded-lg">
+            <div>
+              <div className="text-sm text-gray-600">Total Obtained</div>
+              <div className="font-bold text-[#2F69FF] text-lg">
+                {totalObtained} / {totalMax}
+              </div>
+            </div>
+            <div>
+              <div className="text-sm text-gray-600">Overall % / GPA</div>
+              <div className="font-bold text-[#2F69FF] text-lg">
+                {percentage}% &nbsp; | &nbsp; {gpa} / 5.0
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-3 mt-6">
+            <button
+              onClick={() => setShowPreview(false)}
+              className="px-4 py-2 rounded-lg border bg-white text-gray-700 hover:bg-gray-100"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={generatePDF}
+              className="px-6 py-2 rounded-lg bg-gradient-to-r from-[#2F69FF] to-blue-700 text-white font-semibold flex items-center gap-2 shadow hover:scale-105 transition"
+            >
+              <Download size={18} /> Generate PDF
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-6">
-      <div className="p-6 bg-white rounded-lg shadow-sm">
+      {/* Preview Modal */}
+      {showPreview && <ReportPreview />}
+
+      {/* Tab Selection */}
+      <div className="p-6 bg-white rounded-3xl shadow-sm">
         <div className="flex gap-4 border-b border-gray-200">
           <button
             onClick={() => setActiveTab('generate')}
@@ -536,7 +685,6 @@ const ReportCardPage = () => {
             <FileText className="inline-block mr-2" size={18} />
             Generate Report Card
           </button>
-
           <button
             onClick={() => setActiveTab('upload')}
             className={`pb-3 px-4 font-semibold transition-all ${
@@ -551,15 +699,16 @@ const ReportCardPage = () => {
         </div>
       </div>
 
+      {/* Generate Report Card Tab */}
       {activeTab === 'generate' && (
         <div className="space-y-6">
-          <div className="p-6 bg-white rounded-lg shadow-sm">
+          {/* Basic Information */}
+          <div className="p-6 bg-white rounded-3xl shadow-sm">
             <h3 className="text-lg font-semibold mb-4">Student & School Information</h3>
-
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Student ID
+                  Student ID 
                 </label>
                 <input
                   type="text"
@@ -567,13 +716,14 @@ const ReportCardPage = () => {
                   value={formData.studentId}
                   onChange={handleInputChange}
                   placeholder="e.g., STU2024001"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF]"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF] focus:border-transparent outline-none"
+                  required
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Student Name
+                  Student Name 
                 </label>
                 <input
                   type="text"
@@ -581,13 +731,14 @@ const ReportCardPage = () => {
                   value={formData.studentName}
                   onChange={handleInputChange}
                   placeholder="e.g., Raghav M J"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF]"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF] focus:border-transparent outline-none"
+                  required
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  University/School Name
+                  University/School Name 
                 </label>
                 <input
                   type="text"
@@ -595,7 +746,8 @@ const ReportCardPage = () => {
                   value={formData.universityName}
                   onChange={handleInputChange}
                   placeholder="e.g., MIT School"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF]"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF] focus:border-transparent outline-none"
+                  required
                 />
               </div>
 
@@ -607,7 +759,7 @@ const ReportCardPage = () => {
                   name="className"
                   value={formData.className}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF]"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF] focus:border-transparent outline-none"
                 >
                   <option>Class 9</option>
                   <option>Class 8</option>
@@ -625,7 +777,7 @@ const ReportCardPage = () => {
                   name="academicYear"
                   value={formData.academicYear}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF]"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF] focus:border-transparent outline-none"
                 >
                   <option>2024-2025</option>
                   <option>2023-2024</option>
@@ -642,38 +794,38 @@ const ReportCardPage = () => {
                   value={logoUrl}
                   onChange={(e) => setLogoUrl(e.target.value)}
                   placeholder="https://example.com/logo.png"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF]"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF] focus:border-transparent outline-none"
                 />
+                <p className="text-xs text-gray-500 mt-1">Direct image URL (PNG, JPG)</p>
               </div>
             </div>
           </div>
 
-          <div className="p-6 bg-white rounded-lg shadow-sm">
+          {/* Subjects & Marks */}
+          <div className="p-6 bg-white rounded-3xl shadow-sm">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold">Subject-wise Marks</h3>
               <button
                 onClick={addSubject}
-                className="py-2 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                className="py-2 px-4 bg-blue-500 text-white font-medium rounded-3xl hover:bg-blue-600 transition"
               >
-                + Add Subject
+                Add Subject
               </button>
             </div>
-
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium">Subject Name</th>
-                    <th className="px-4 py-3 text-center text-xs font-medium">Max Marks</th>
-                    <th className="px-4 py-3 text-center text-xs font-medium">Min Marks</th>
-                    <th className="px-4 py-3 text-center text-xs font-medium">Obtained</th>
-                    <th className="px-4 py-3 text-center text-xs font-medium">Percentage</th>
-                    <th className="px-4 py-3 text-center text-xs font-medium">Grade</th>
-                    <th className="px-4 py-3 text-center text-xs font-medium">Action</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase ">Subject Name</th>
+                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Max Marks</th>
+                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Min Marks</th>
+                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Obtained</th>
+                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Percentage</th>
+                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Grade</th>
+                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Action</th>
                   </tr>
                 </thead>
-
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-white divide-y divide-gray-200 ">
                   {subjects.map((subject) => {
                     const percentage = calculatePercentage(subject.obtained, subject.maxMarks);
                     const grade = calculateGrade(percentage);
@@ -686,48 +838,51 @@ const ReportCardPage = () => {
                             value={subject.name}
                             onChange={(e) => handleSubjectChange(subject.id, 'name', e.target.value)}
                             placeholder="Subject Name"
-                            className="w-full px-3 py-1 border rounded"
+                            className="w-full px-3 py-1 border border-gray-300 rounded-3xl focus:ring-1 focus:ring-[#2F69FF] outline-none"
                           />
                         </td>
-
-                        <td className="px-4 py-3 text-center">
+                        <td className="px-4 py-3">
                           <input
                             type="number"
                             value={subject.maxMarks}
                             onChange={(e) => handleSubjectChange(subject.id, 'maxMarks', e.target.value)}
-                            className="w-20 px-3 py-1 border rounded text-center"
+                            className="w-20 px-3 py-1 ml-10 border border-gray-300 rounded-3xl text-center focus:ring-1 focus:ring-[#2F69FF] outline-none"
                             min="0"
                           />
                         </td>
-
-                        <td className="px-4 py-3 text-center">
+                        <td className="px-4 py-3">
                           <input
                             type="number"
                             value={subject.minMarks}
                             onChange={(e) => handleSubjectChange(subject.id, 'minMarks', e.target.value)}
-                            className="w-20 px-3 py-1 border rounded text-center"
+                            className="w-20 px-3 py-1 ml-10 border border-gray-300 rounded-3xl text-center focus:ring-1 focus:ring-[#2F69FF] outline-none"
                             min="0"
                           />
                         </td>
-
-                        <td className="px-4 py-3 text-center">
+                        <td className="px-4 py-3">
                           <input
                             type="number"
                             value={subject.obtained}
                             onChange={(e) => handleSubjectChange(subject.id, 'obtained', e.target.value)}
-                            className="w-20 px-3 py-1 border rounded text-center"
+                            className="w-20 px-3 py-1 ml-12 border border-gray-300 rounded-3xl text-center focus:ring-1 focus:ring-[#2F69FF] outline-none"
                             min="0"
                             max={subject.maxMarks}
                           />
+                          {subject.obtained > subject.maxMarks && (
+                            <p className="text-xs text-red-500 mt-1">Max: {subject.maxMarks}</p>
+                          )}
                         </td>
-
-                        <td className="px-4 py-3 text-center">{percentage}%</td>
-                        <td className="px-4 py-3 text-center font-bold">{grade}</td>
-
+                        <td className="px-4 py-3 text-center text-sm font-medium text-gray-700">
+                          {percentage}%
+                        </td>
+                        <td className="px-4 py-3 text-center text-sm font-bold text-gray-800">
+                          {grade}
+                        </td>
                         <td className="px-4 py-3 text-center">
                           <button
                             onClick={() => removeSubject(subject.id)}
-                            className="text-blue-600 hover:text-blue-800"
+                            className="text-blue-600 hover:text-blue-800 font-medium"
+                            disabled={subjects.length === 1}
                           >
                             Remove
                           </button>
@@ -739,7 +894,7 @@ const ReportCardPage = () => {
               </table>
             </div>
 
-            <div className="mt-6 p-4 bg-blue-50 rounded-lg border">
+            <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <p className="text-sm text-gray-600 ml-2">Total Marks Obtained</p>
@@ -747,14 +902,12 @@ const ReportCardPage = () => {
                     {calculateTotals().totalObtained} / {calculateTotals().totalMax}
                   </p>
                 </div>
-
                 <div>
                   <p className="text-sm text-gray-600 ml-10">Overall Percentage</p>
                   <p className="text-2xl font-bold text-[#2F69FF] ml-14">
                     {calculateTotals().percentage}%
                   </p>
                 </div>
-
                 <div>
                   <p className="text-sm text-gray-600 ml-20">GPA (5.0 Scale)</p>
                   <p className="text-2xl font-bold text-blue-600 ml-20">
@@ -767,11 +920,11 @@ const ReportCardPage = () => {
 
           <div className="flex gap-4 justify-center">
             <button
-              onClick={generatePDF}
-              className="py-3 px-6 bg-[#2F69FF] text-white rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center gap-2"
+              onClick={() => setShowPreview(true)}
+              className="py-3 px-6 bg-gradient-to-r from-[#2F69FF] to-[#1e4fd9] text-white font-semibold rounded-3xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center gap-2"
             >
-              <Download size={20} />
-              Generate & Download PDF
+              <Eye size={20} />
+              View Report
             </button>
           </div>
         </div>
@@ -780,35 +933,36 @@ const ReportCardPage = () => {
       {activeTab === 'upload' && (
         <div className="p-6 bg-white rounded-lg shadow-sm">
           <h3 className="text-lg font-semibold mb-4">Upload Existing Report Card</h3>
-
-          <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-[#2F69FF]">
+          <div className="border-2 border-dashed border-gray-300 rounded-3xl p-8 text-center hover:border-[#2F69FF] transition">
             <Upload className="mx-auto mb-4 text-gray-400" size={48} />
             <p className="text-gray-600 mb-4">Upload a PDF report card file</p>
-
             <label className="inline-block">
-              <input type="file" accept=".pdf" onChange={handleFileUpload} className="hidden" />
-              <span className="py-2 px-6 bg-[#2F69FF] text-white rounded-lg cursor-pointer">
+              <input
+                type="file"
+                accept=".pdf"
+                onChange={handleFileUpload}
+                className="hidden"
+              />
+              <span className="py-2 px-6 bg-[#2F69FF] text-white font-medium rounded-3xl cursor-pointer hover:bg-blue-700 inline-block">
                 Choose File
               </span>
             </label>
           </div>
-
           {uploadedFile && (
             <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <FileText className="text-blue-600" size={24} />
                   <div>
-                    <p className="font-semibold">{uploadedFile.name}</p>
+                    <p className="font-semibold text-gray-800">{uploadedFile.name}</p>
                     <p className="text-sm text-gray-600">
                       {(uploadedFile.size / 1024).toFixed(2)} KB
                     </p>
                   </div>
                 </div>
-
                 <button
                   onClick={downloadUploadedFile}
-                  className="py-2 px-4 bg-[#2F69FF] text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
+                  className="py-2 px-4 bg-[#2F69FF] text-white font-medium rounded-3xl hover:bg-blue-700 flex items-center gap-2"
                 >
                   <Download size={18} />
                   Download

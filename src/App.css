@@ -5,10 +5,11 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  background: linear-gradient(135deg, #667eea 0%,#667eea 100%);
+  font-family: 'Poppins';
+  background: linear-gradient(135deg, #667eea 0%, #667eea 100%);
   min-height: 100vh;
 }
+
 
 .login-page {
   display: flex;

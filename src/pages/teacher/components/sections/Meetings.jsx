@@ -151,15 +151,15 @@ const Meeting = () => {
       {showMeetingForm && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Schedule Meeting Form */}
-          <div className="bg-white rounded-xl shadow-lg p-6">
+          <div className="bg-white rounded-3xl shadow-lg p-6">
             <h2 className="text-xl font-semibold mb-6 text-gray-800 flex items-center gap-2">
               <Calendar size={24} className="text-[#2F69FF]" />
               Schedule New Meeting
             </h2>
             
-            <form onSubmit={handleScheduleMeeting} className="space-y-4">
+            <form onSubmit={handleScheduleMeeting} className="space-y-4 ">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2 ">
                   Meeting Title 
                 </label>
                 <input
@@ -256,7 +256,7 @@ const Meeting = () => {
             
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-[#2F69FF] to-[#1e4fd9] text-white py-3 rounded-lg font-semibold hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200"
+                className="w-full bg-gradient-to-r from-[#2F69FF] to-[#1e4fd9] text-white py-3 rounded-3xl font-semibold hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200"
               >
                 Schedule Meeting
               </button>

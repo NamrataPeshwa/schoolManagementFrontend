@@ -266,7 +266,7 @@ const TimeTablePage = () => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* Calendar */}
-      <div className="lg:col-span-2 p-6 bg-white rounded-lg shadow-sm">
+      <div className="lg:col-span-2 p-6 bg-white rounded-3xl shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <button 
             onClick={handlePrevMonth}
@@ -376,12 +376,12 @@ const TimeTablePage = () => {
             setEditingEvent(null);
             setShowModal(true);
           }}
-          className="w-full py-3 px-6 bg-gradient-to-r from-[#2F69FF] to-[#1e4fd9] text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+          className="w-full py-3 px-6 bg-gradient-to-r from-[#2F69FF] to-[#1e4fd9] text-white font-semibold rounded-3xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
         >
           Add New Event
         </button>
 
-        <div className="p-6 bg-white rounded-lg shadow-sm">
+        <div className="p-6 bg-white rounded-3xl shadow-sm">
           <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <CalendarIcon size={20} className="text-[#2F69FF]" />
             Upcoming Events
@@ -466,7 +466,7 @@ const TimeTablePage = () => {
             <form onSubmit={handleSubmitEvent} className="p-6 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Date *
+                  Date 
                 </label>
                 <input
                   type="date"
@@ -480,7 +480,7 @@ const TimeTablePage = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Event Title *
+                  Event Title 
                 </label>
                 <input
                   type="text"
@@ -495,7 +495,7 @@ const TimeTablePage = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Subject *
+                  Subject 
                 </label>
                 <input
                   type="text"
@@ -511,7 +511,7 @@ const TimeTablePage = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Start Time *
+                    Start Time 
                   </label>
                   <input
                     type="time"
@@ -525,7 +525,7 @@ const TimeTablePage = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    End Time *
+                    End Time 
                   </label>
                   <input
                     type="time"

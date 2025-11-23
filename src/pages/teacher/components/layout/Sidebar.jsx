@@ -31,9 +31,9 @@ const Sidebar = ({ currentPage, setCurrentPage, isSidebarOpen, setIsSidebarOpen 
         }}
         className={`
           group relative flex items-center w-full px-4 py-3 rounded-xl 
-          transition-all duration-300 ease-in-out
+          transition-all duration-300 ease-in-out 
           ${isActive
-            ? "bg-gradient-to-r from-white to-white/95 text-[#2F69FF] shadow-lg scale-105"
+            ? "bg-gradient-to-r from-white to-white/95 text-[#2F69FF] shadow-lg scale-1 rounded-3xl "
             : "text-white/90 hover:text-white hover:bg-white/10 hover:scale-105 hover:shadow-md"
           }
           ${!isExpanded ? 'justify-center' : ''}
@@ -55,7 +55,7 @@ const Sidebar = ({ currentPage, setCurrentPage, isSidebarOpen, setIsSidebarOpen 
           {name}
         </span>
         {isActive && isExpanded && (
-          <div className="absolute right-3 w-2 h-2 bg-[#2F69FF] rounded-full"></div>
+          <div className="absolute right-3 w-2 h-2 bg-blue-900 rounded-full"></div>
         )}
       </button>
     );
@@ -75,7 +75,7 @@ const Sidebar = ({ currentPage, setCurrentPage, isSidebarOpen, setIsSidebarOpen 
         onMouseLeave={() => setIsExpanded(false)}
         className={`
           fixed lg:sticky top-0 left-0 z-40 h-screen 
-          bg-gradient-to-b from-[#2F69FF] via-[#2F69FF] to-[#1e4fd9]
+          bg-gradient-to-b from-blue-900 via-blue-900 to-blue-900
           text-white flex flex-col p-4 
           transition-all duration-300 ease-in-out
           shadow-2xl
@@ -129,7 +129,8 @@ const Sidebar = ({ currentPage, setCurrentPage, isSidebarOpen, setIsSidebarOpen 
       {/* Custom Scrollbar Styles */}
       <style jsx>{`
         .custom-scrollbar::-webkit-scrollbar {
-          width: 4px;
+          width: 1.5px;
+
         }
         .custom-scrollbar::-webkit-scrollbar-track {
           background: rgba(255, 255, 255, 0.1);
