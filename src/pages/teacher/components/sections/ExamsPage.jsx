@@ -9,7 +9,7 @@ const ExamsPage = () => {
       {/* Top section */}
       <div className="flex flex-col md:flex-row gap-6">
         {/* Schedule New Exam */}
-        <div className="flex-1 p-6 bg-white rounded-lg shadow-sm">
+        <div className="flex-1 p-6 bg-white rounded-3xl shadow-sm">
           <h3 className="text-lg font-semibold mb-4">Schedule New Exam</h3>
           <form className="space-y-4">
             <div>
@@ -18,7 +18,7 @@ const ExamsPage = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Class/Subject</label>
-              <select className="w-full px-3 py-2 border border-gray-300 rounded-lg">
+              <select className="w-full px-3 py-2 border border-gray-300 rounded-3xl">
                 <option>Select Class</option>
                 <option>Class 9 Physics</option>
                 <option>Class 7 Biology</option>
@@ -27,21 +27,21 @@ const ExamsPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
-                <input type="date" className="w-full px-3 py-2 border border-gray-300 rounded-lg" />
+                <input type="date" className="w-full px-3 py-2 border border-gray-300 rounded-3xl" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Start Time</label>
-                <input type="time" className="w-full px-3 py-2 border border-gray-300 rounded-lg" />
+                <input type="time" className="w-full px-3 py-2 border border-gray-300 rounded-3xl" />
               </div>
             </div>
-            <button type="submit" className="py-2 px-6 bg-[#2F69FF] text-white font-medium rounded-lg shadow-md hover:bg-blue-700">
+            <button type="submit" className="py-2 px-6 bg-[#2F69FF] text-white font-medium rounded-3xl shadow-md hover:bg-blue-700">
               Schedule Exam
             </button>
           </form>
         </div>
 
         {/* Upcoming Exams */}
-        <div className="flex-1 p-6 bg-white rounded-lg shadow-sm">
+        <div className="flex-1 p-6 bg-white rounded-3xl shadow-sm">
           <h3 className="text-lg font-semibold mb-4">Upcoming Exams</h3>
           <div className="space-y-3">
             {MOCK_EXAMS.filter(e => e.type === 'upcoming').map(exam => (
@@ -63,7 +63,7 @@ const ExamsPage = () => {
       </div>
 
       {/* Past Exams */}
-      <div className="p-6 bg-white rounded-lg shadow-sm">
+      <div className="p-6 bg-white rounded-3xl shadow-sm">
         <h3 className="text-lg font-semibold mb-4">Past Exams - Enter Marks</h3>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">

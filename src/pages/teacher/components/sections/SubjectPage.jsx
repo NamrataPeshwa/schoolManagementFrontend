@@ -83,7 +83,7 @@ const SubjectPage = () => {
         </div>
         <button
           onClick={() => setIsAddModalOpen(true)}
-          className="flex items-center gap-2 py-2 px-5 bg-[#2F69FF] text-white font-medium rounded-lg shadow-md hover:bg-blue-700"
+          className="flex items-center gap-2 py-2 px-5 bg-[#2F69FF] text-white font-medium rounded-3xl shadow-md hover:bg-blue-700"
         >
           <Plus size={20} />
           Add New Subject
@@ -92,7 +92,7 @@ const SubjectPage = () => {
 
       {/* Summary Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        <div className="p-5 bg-white rounded-lg shadow-sm">
+        <div className="p-5 bg-white rounded-3xl shadow-sm">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-500 uppercase">Total Subjects</p>
@@ -103,7 +103,7 @@ const SubjectPage = () => {
             </div>
           </div>
         </div>
-        <div className="p-5 bg-white rounded-lg shadow-sm">
+        <div className="p-5 bg-white rounded-3xl shadow-sm">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-500 uppercase">Total Students</p>
@@ -116,7 +116,7 @@ const SubjectPage = () => {
             </div>
           </div>
         </div>
-        <div className="p-5 bg-white rounded-lg shadow-sm">
+        <div className="p-5 bg-white rounded-3xl shadow-sm">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-500 uppercase">Total Topics</p>
@@ -129,7 +129,7 @@ const SubjectPage = () => {
             </div>
           </div>
         </div>
-        <div className="p-5 bg-white rounded-lg shadow-sm">
+        <div className="p-5 bg-white rounded-3xl shadow-sm">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-500 uppercase">Avg Completion</p>
@@ -147,7 +147,7 @@ const SubjectPage = () => {
       {/* Subjects Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {subjects.map((subject) => (
-          <div key={subject.id} className="p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
+          <div key={subject.id} className="p-6 bg-white rounded-3xl shadow-sm hover:shadow-md transition-shadow">
             <div className="flex items-start justify-between mb-4">
               <div className={`px-3 py-1 rounded-full ${subject.color} font-medium text-sm`}>
                 {subject.grade}
@@ -208,7 +208,7 @@ const SubjectPage = () => {
               </div>
             </div>
 
-            <button className="w-full py-2 px-4 bg-blue-50 text-[#2F69FF] font-medium rounded-lg hover:bg-blue-100 transition-colors">
+            <button className="w-full py-2 px-4 bg-blue-50 text-[#2F69FF] font-medium rounded-3xl hover:bg-blue-100 transition-colors">
               View Details
             </button>
           </div>

@@ -23,13 +23,13 @@ const AssignmentsPage = () => {
       <div className="flex gap-4">
         <button
           onClick={() => setView("upload")}
-          className="py-2 px-5 bg-[#2F69FF] text-white font-medium rounded-lg shadow-md hover:bg-blue-700"
+          className="py-2 px-5 bg-[#2F69FF] text-white font-medium rounded-3xl shadow-md hover:bg-blue-700"
         >
           Upload New Assignments
         </button>
         <button
           onClick={() => setView("view")}
-          className="py-2 px-5 bg-white text-gray-700 font-medium rounded-lg shadow-md border border-gray-300 hover:bg-gray-50"
+          className="py-2 px-5 bg-white text-gray-700 font-medium rounded-3xl shadow-md border border-gray-300 hover:bg-blue-700 hover:text-white"
         >
           View Submitted Assignments
         </button>
@@ -42,16 +42,16 @@ const AssignmentsPage = () => {
           <form className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
-              <input type="text" className="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="e.g. Algebra Homework" />
+              <input type="text" className="w-full px-3 py-2 border border-gray-300 rounded-3xl" placeholder="e.g. Algebra Homework" />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
-                <input type="date" className="w-full px-3 py-2 border border-gray-300 rounded-lg" />
+                <input type="date" className="w-full px-3 py-2 border border-gray-300 rounded-3xl" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Class/Subject</label>
-                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                <select className="w-full px-3 py-2 border border-gray-300 rounded-3xl">
                   <option>Select Class</option>
                   <option>Class 5 Math</option>
                   <option>Class 6 Science</option>
@@ -61,11 +61,11 @@ const AssignmentsPage = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-              <textarea className="w-full px-3 py-2 border border-gray-300 rounded-lg" rows="3" placeholder="Add a description..."></textarea>
+              <textarea className="w-full px-3 py-2 border border-gray-300 rounded-3xl" rows="3" placeholder="Add a description..."></textarea>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Attach File (Max 10MB)</label>
-              <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+              <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-2xl">
                 <div className="space-y-1 text-center">
                   <Upload className="mx-auto h-12 w-12 text-gray-400" />
                   <div className="flex text-sm text-gray-600">
@@ -79,7 +79,7 @@ const AssignmentsPage = () => {
                 </div>
               </div>
             </div>
-            <button type="submit" className="py-2 px-6 bg-[#2F69FF] text-white font-medium rounded-lg shadow-md hover:bg-blue-700">
+            <button type="submit" className="py-2 px-6 bg-[#2F69FF] text-white font-medium rounded-3xl shadow-md hover:bg-blue-700">
               Upload
             </button>
           </form>
@@ -88,7 +88,7 @@ const AssignmentsPage = () => {
 
       {/* View Submissions View */}
       {view === "view" && (
-        <div className="p-6 bg-white rounded-lg shadow-sm">
+        <div className="p-6 bg-white rounded-3xl shadow-sm">
           <h3 className="text-lg font-semibold mb-4">Submitted Assignments</h3>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
@@ -131,7 +131,7 @@ const AssignmentsPage = () => {
       {/* Grading Modal */}
       {isModalOpen && selectedAssignment && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6 relative">
+          <div className="bg-white rounded-3xl shadow-xl w-full max-w-md p-6 relative">
             <button
               onClick={closeModal}
               className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
@@ -142,7 +142,7 @@ const AssignmentsPage = () => {
             <img
               src="https://placehold.co/100x100/E8F0FE/333333?text=File+Icon"
               alt="File"
-              className="w-24 h-24 mx-auto mb-4 rounded-lg"
+              className="w-24 h-24 mx-auto mb-4 rounded-3xl"
               onError={(e) => e.target.style.display = 'none'}
             />
             <div className="text-center mb-4">

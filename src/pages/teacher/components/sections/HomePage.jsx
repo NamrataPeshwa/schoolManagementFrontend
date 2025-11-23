@@ -18,7 +18,7 @@ const HomePage = () => {
   return (
     <div className="space-y-6">
       {/* Welcome Banner */}
-      <div className="flex flex-col md:flex-row items-center justify-between p-6 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg">
+      <div className="flex flex-col md:flex-row items-center justify-between p-6 bg-gradient-to-r from-blue-50 to-blue-100 rounded-3xl">
         <div>
           <h2 className="text-2xl font-bold text-gray-800">Welcome back, Teacher!</h2>
           <p className="text-gray-600">Let's make today awesome. A step towards a bright future....</p>
@@ -60,11 +60,11 @@ const HomePage = () => {
       {/* Main Content Area */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Recent Activity */}
-        <div className="lg:col-span-2 p-6 bg-white rounded-lg shadow-sm">
+        <div className="lg:col-span-2 p-6 bg-white rounded-3xl shadow-sm">
           <h3 className="text-lg font-semibold mb-4">Recent Activity Feed</h3>
           <div className="space-y-4">
             {MOCK_RECENT_ACTIVITY.map((activity) => (
-              <div key={activity.id} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50">
+              <div key={activity.id} className="flex items-center justify-between p-3 rounded-3xl hover:bg-gray-50">
                 <div className="flex items-center gap-3">
                   <img
                     src={activity.user.avatar}
@@ -92,7 +92,7 @@ const HomePage = () => {
               <p className="text-gray-600">No new announcements.</p>
             </div>
           </div>
-          <div className="p-6 bg-white rounded-lg shadow-sm">
+          <div className="p-6 bg-white rounded-3xl shadow-sm">
             <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
             <div className="flex flex-col sm:flex-row lg:flex-col gap-3">
               <button className="flex-1 text-white bg-[#2F69FF] hover:bg-blue-700 py-2 px-4 rounded-lg font-medium">

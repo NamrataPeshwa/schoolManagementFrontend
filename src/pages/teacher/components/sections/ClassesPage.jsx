@@ -10,19 +10,19 @@ const ClassesPage = () => {
     <div className="space-y-6">
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {MOCK_CLASSES.slice(0, 3).map((cls) => (
-          <div key={cls.id} className="p-5 bg-white rounded-lg shadow-sm">
+          <div key={cls.id} className="p-5 bg-white rounded-3xl shadow-sm">
             <h3 className="font-semibold text-lg">{cls.name}</h3>
             <p className="text-gray-500">{cls.students} Students</p>
             <button
               onClick={() => setSelectedClass(cls)}
-              className="mt-4 w-full text-center py-2 px-4 rounded-lg bg-[#2F69FF] text-white font-medium hover:bg-blue-700"
+              className="mt-4 w-full text-center py-2 px-4 rounded-3xl bg-[#2F69FF] text-white font-medium hover:bg-blue-700"
             >
               View Details
             </button>
           </div>
         ))}
         {/* Stat Card */}
-        <div className="p-5 bg-white rounded-lg shadow-sm flex flex-col justify-center">
+        <div className="p-5 bg-white rounded-3xl shadow-sm flex flex-col justify-center">
           <h4 className="text-sm font-medium text-gray-500 uppercase">Total Assignments</h4>
           <span className="text-3xl font-bold text-gray-800">18</span>
         </div>
@@ -33,7 +33,7 @@ const ClassesPage = () => {
         <div className="lg:col-span-2 space-y-6">
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             {MOCK_CLASSES.slice(3).map((cls) => (
-              <div key={cls.id} className="p-5 bg-white rounded-lg shadow-sm flex items-center justify-between">
+              <div key={cls.id} className="p-5 bg-white rounded-3xl shadow-sm flex items-center justify-between">
                 <div>
                   <h3 className="font-semibold text-md">{cls.name}</h3>
                   <p className="text-gray-500">{cls.students} Students</p>
@@ -41,7 +41,7 @@ const ClassesPage = () => {
                 </div>
                 <button
                   onClick={() => setSelectedClass(cls)}
-                  className="py-2 px-4 rounded-lg bg-blue-100 text-[#2F69FF] font-medium hover:bg-blue-200"
+                  className="py-2 px-4 rounded-3xl bg-blue-100 text-[#2F69FF] font-medium hover:bg-blue-200"
                 >
                   View
                 </button>
@@ -51,7 +51,7 @@ const ClassesPage = () => {
 
           {/* Selected Class Details */}
           {selectedClass && (
-            <div className="p-6 bg-white rounded-lg shadow-sm">
+            <div className="p-6 bg-white rounded-3xl shadow-sm">
               <h3 className="text-lg font-semibold mb-4">
                 Selected Class: {selectedClass.name}
               </h3>
@@ -121,13 +121,13 @@ const ClassesPage = () => {
 
         {/* Side Panel */}
         <div className="space-y-6">
-          <div className="p-6 bg-white rounded-lg shadow-sm">
+          <div className="p-6 bg-white rounded-3xl shadow-sm">
             <h3 className="text-lg font-semibold mb-4 text-white bg-[#2F69FF] -mx-6 -mt-6 rounded-t-lg px-6 py-3">Announcements</h3>
             <div className="space-y-3 pt-4">
               <p className="text-sm text-gray-500">No new announcements for this class.</p>
             </div>
           </div>
-          <div className="p-6 bg-white rounded-lg shadow-sm">
+          <div className="p-6 bg-white rounded-3xl shadow-sm">
             <h3 className="text-lg font-semibold mb-4">Daily Attendance Log</h3>
             {/* Simple Calendar Placeholder */}
             <div className="text-center font-medium mb-2">November 2025</div>
