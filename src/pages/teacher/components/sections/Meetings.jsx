@@ -1,11 +1,13 @@
 // pages/Meeting.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Video, Calendar, Clock, Users, Copy, Check } from 'lucide-react';
+
 
 const Meeting = () => {
   const [showMeetingForm, setShowMeetingForm] = useState(true);
   const [showJitsiMeet, setShowJitsiMeet] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [visibleSections, setVisibleSections] = useState(new Set([0]));
   
   const [meetingDetails, setMeetingDetails] = useState({
     title: '',
@@ -19,6 +21,45 @@ const Meeting = () => {
   });
 
   const [scheduledMeetings, setScheduledMeetings] = useState([]);
+  const sectionRefs = useRef([]);
+
+  // Bidirectional Intersection Observer
+  useEffect(() => {
+    const observerOptions = {
+      threshold: 0.15,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observers = sectionRefs.current.map((ref, index) => {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              setTimeout(() => {
+                setVisibleSections((prev) => new Set([...prev, index]));
+              }, 50);
+            } else {
+              if (index !== 0) {
+                setVisibleSections((prev) => {
+                  const newSet = new Set(prev);
+                  newSet.delete(index);
+                  return newSet;
+                });
+              }
+            }
+          });
+        },
+        observerOptions
+      );
+
+      if (ref) observer.observe(ref);
+      return observer;
+    });
+
+    return () => {
+      observers.forEach((observer) => observer.disconnect());
+    };
+  }, [showMeetingForm]);
 
   // Load Jitsi Meet API script
   useEffect(() => {
@@ -61,7 +102,6 @@ const Meeting = () => {
 
     setScheduledMeetings(prev => [...prev, newMeeting]);
     
-    // Reset form
     setMeetingDetails({
       title: '',
       description: '',
@@ -140,26 +180,37 @@ const Meeting = () => {
 
   return (
     <div className="max-w-8xl mx-auto">
-      <div className="mb-8">
+      {/* Header */}
+      <div 
+        ref={(el) => (sectionRefs.current[0] = el)}
+        className={`mb-8 transition-all duration-1000 ease-out ${
+          visibleSections.has(0) ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'
+        }`}
+      >
         <h1 className="text-3xl font-bold text-gray-800 flex items-center gap-3">
-          <Video className="text-[#2F69FF]" size={36} />
+          <Video className="text-[#2F69FF] animate-pulse-slow" size={36} />
           Jitsi Meetings
         </h1>
         <p className="text-gray-600 mt-2">Schedule and join video meetings with Jitsi Meet</p>
       </div>
 
       {showMeetingForm && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div 
+          ref={(el) => (sectionRefs.current[1] = el)}
+          className={`grid grid-cols-1 lg:grid-cols-2 gap-6 transition-all duration-1000 ease-out ${
+            visibleSections.has(1) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
+          }`}
+        >
           {/* Schedule Meeting Form */}
-          <div className="bg-white rounded-3xl shadow-lg p-6">
+          <div className="bg-white rounded-3xl shadow-lg p-6 hover:shadow-2xl transition-all duration-300">
             <h2 className="text-xl font-semibold mb-6 text-gray-800 flex items-center gap-2">
               <Calendar size={24} className="text-[#2F69FF]" />
               Schedule New Meeting
             </h2>
             
-            <form onSubmit={handleScheduleMeeting} className="space-y-4 ">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2 ">
+            <form onSubmit={handleScheduleMeeting} className="space-y-4">
+              <div className="animate-fade-in-stagger" style={{ animationDelay: '0ms' }}>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Meeting Title 
                 </label>
                 <input
@@ -169,11 +220,11 @@ const Meeting = () => {
                   onChange={handleInputChange}
                   required
                   placeholder="e.g., Math Class - Grade 10"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF] focus:border-transparent outline-none transition"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF] focus:border-transparent outline-none transition-all duration-300"
                 />
               </div>
 
-              <div>
+              <div className="animate-fade-in-stagger" style={{ animationDelay: '100ms' }}>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Host Name 
                 </label>
@@ -184,11 +235,11 @@ const Meeting = () => {
                   onChange={handleInputChange}
                   required
                   placeholder="Your Name"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF] focus:border-transparent outline-none transition"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF] focus:border-transparent outline-none transition-all duration-300"
                 />
               </div>
 
-              <div>
+              <div className="animate-fade-in-stagger" style={{ animationDelay: '200ms' }}>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Description
                 </label>
@@ -198,11 +249,11 @@ const Meeting = () => {
                   onChange={handleInputChange}
                   rows="3"
                   placeholder="Meeting agenda or description..."
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF] focus:border-transparent outline-none transition resize-none"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF] focus:border-transparent outline-none transition-all duration-300 resize-none"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4 animate-fade-in-stagger" style={{ animationDelay: '300ms' }}>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Date 
@@ -213,7 +264,7 @@ const Meeting = () => {
                     value={meetingDetails.date}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF] focus:border-transparent outline-none transition"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF] focus:border-transparent outline-none transition-all duration-300"
                   />
                 </div>
 
@@ -227,12 +278,12 @@ const Meeting = () => {
                     value={meetingDetails.time}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF] focus:border-transparent outline-none transition"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF] focus:border-transparent outline-none transition-all duration-300"
                   />
                 </div>
               </div>
 
-              <div>
+              <div className="animate-fade-in-stagger" style={{ animationDelay: '400ms' }}>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Duration (minutes) 
                 </label>
@@ -241,7 +292,7 @@ const Meeting = () => {
                   value={meetingDetails.duration}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF] focus:border-transparent outline-none transition"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2F69FF] focus:border-transparent outline-none transition-all duration-300"
                 >
                   <option value="30">30 minutes</option>
                   <option value="45">45 minutes</option>
@@ -251,12 +302,10 @@ const Meeting = () => {
                 </select>
               </div>
 
-              
-                
-            
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-[#2F69FF] to-[#1e4fd9] text-white py-3 rounded-3xl font-semibold hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200"
+                className="w-full bg-gradient-to-r from-[#2F69FF] to-[#1e4fd9] text-white py-3 rounded-3xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-300 animate-fade-in-stagger"
+                style={{ animationDelay: '500ms' }}
               >
                 Schedule Meeting
               </button>
@@ -264,23 +313,24 @@ const Meeting = () => {
           </div>
 
           {/* Scheduled Meetings List */}
-          <div className="bg-white rounded-xl shadow-lg p-6">
+          <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-2xl transition-all duration-300">
             <h2 className="text-xl font-semibold mb-6 text-gray-800 flex items-center gap-2">
               <Clock size={24} className="text-[#2F69FF]" />
               Scheduled Meetings ({scheduledMeetings.length})
             </h2>
 
-            <div className="space-y-4 max-h-[600px] overflow-y-auto">
+            <div className="space-y-4 max-h-[600px] overflow-y-auto custom-scrollbar">
               {scheduledMeetings.length === 0 ? (
-                <div className="text-center py-12 text-gray-400">
-                  <Calendar size={48} className="mx-auto mb-3 opacity-50" />
+                <div className="text-center py-12 text-gray-400 animate-fade-in">
+                  <Calendar size={48} className="mx-auto mb-3 opacity-50 animate-bounce-slow" />
                   <p>No meetings scheduled yet</p>
                 </div>
               ) : (
-                scheduledMeetings.map((meeting) => (
+                scheduledMeetings.map((meeting, idx) => (
                   <div
                     key={meeting.id}
-                    className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                    className="border border-gray-200 rounded-lg p-4 hover:shadow-md hover:scale-102 transition-all duration-300 animate-fade-in-stagger"
+                    style={{ animationDelay: `${idx * 80}ms` }}
                   >
                     <h3 className="font-semibold text-gray-800 mb-2">{meeting.title}</h3>
                     <div className="space-y-1 text-sm text-gray-600 mb-3">
@@ -307,16 +357,16 @@ const Meeting = () => {
                       />
                       <button
                         onClick={() => copyMeetingLink(meeting.meetingLink)}
-                        className="p-2 bg-gray-100 hover:bg-gray-200 rounded transition"
+                        className="p-2 bg-gray-100 hover:bg-gray-200 rounded transition-all duration-300 hover:scale-110"
                         title="Copy link"
                       >
-                        {copied ? <Check size={16} className="text-green-600" /> : <Copy size={16} />}
+                        {copied ? <Check size={16} className="text-green-600 animate-scale-in" /> : <Copy size={16} />}
                       </button>
                     </div>
 
                     <button
                       onClick={() => startMeeting(meeting)}
-                      className="w-full bg-[#2F69FF] text-white py-2 rounded-lg font-medium hover:bg-[#1e4fd9] transition"
+                      className="w-full bg-[#2F69FF] text-white py-2 rounded-lg font-medium hover:bg-[#1e4fd9] hover:scale-105 transition-all duration-300"
                     >
                       Join Meeting
                     </button>
@@ -330,7 +380,7 @@ const Meeting = () => {
 
       {/* Jitsi Meet Video Conference */}
       {showJitsiMeet && (
-        <div className="bg-white rounded-xl shadow-lg p-6">
+        <div className="bg-white rounded-xl shadow-lg p-6 animate-fade-in">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold text-gray-800">{meetingDetails.title}</h2>
             <button
@@ -338,18 +388,102 @@ const Meeting = () => {
                 setShowJitsiMeet(false);
                 setShowMeetingForm(true);
               }}
-              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 hover:scale-105 transition-all duration-300"
             >
               Leave Meeting
             </button>
           </div>
           
-          <JitsiMeetComponent 
-            roomName={meetingDetails.roomName} 
-            displayName={meetingDetails.hostName}
-          />
+          <div className="animate-slide-up" style={{ animationDelay: '200ms' }}>
+            <JitsiMeetComponent 
+              roomName={meetingDetails.roomName} 
+              displayName={meetingDetails.hostName}
+            />
+          </div>
         </div>
       )}
+
+      {/* CSS Animations */}
+      <style jsx>{`
+        @keyframes fade-in {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+
+        @keyframes scale-in {
+          from { opacity: 0; transform: scale(0.9); }
+          to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes slide-up {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fade-in-stagger {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes bounce-slow {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulse-slow {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
+        }
+
+        .animate-fade-in {
+          animation: fade-in 0.3s ease-out forwards;
+        }
+
+        .animate-scale-in {
+          animation: scale-in 0.4s ease-out forwards;
+        }
+
+        .animate-slide-up {
+          animation: slide-up 0.5s ease-out forwards;
+          opacity: 0;
+        }
+
+        .animate-fade-in-stagger {
+          animation: fade-in-stagger 0.5s ease-out forwards;
+          opacity: 0;
+        }
+
+        .animate-bounce-slow {
+          animation: bounce-slow 2s ease-in-out infinite;
+        }
+
+        .animate-pulse-slow {
+          animation: pulse-slow 2s ease-in-out infinite;
+        }
+
+        .hover:scale-102:hover {
+          transform: scale(1.02);
+        }
+
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 2px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: #f1f5f9;
+          border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: #cbd5e1;
+          border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: #2563eb;
+        }
+      `}</style>
     </div>
   );
 };

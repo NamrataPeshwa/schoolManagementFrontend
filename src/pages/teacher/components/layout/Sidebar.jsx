@@ -85,7 +85,7 @@ const Sidebar = ({ currentPage, setCurrentPage, isSidebarOpen, setIsSidebarOpen 
         `}
       >
         {/* Logo Section */}
-        <div className="flex items-center justify-center p-4 mb-6">
+        <div className="flex items-center justify-center p-[-2] mb-2">
           <div className={`transition-all duration-300 overflow-hidden ${
             !isExpanded ? 'w-10 h-10' : 'w-full'
           }`}>

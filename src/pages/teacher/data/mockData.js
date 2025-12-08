@@ -14,6 +14,8 @@ export const MOCK_STATS = {
 export const MOCK_RECENT_ACTIVITY = [
   { id: 1, user: { name: "Alice Smith", avatar: "https://placehold.co/100x100/E8F0FE/505050?text=AS" }, action: "reviewed assignment for", subject: "Class 5 Math" },
   { id: 2, user: { name: "John Doe", avatar: "https://placehold.co/100x100/E8F0FE/505050?text=JD" }, action: "scheduled exam for", subject: "Class 8 Science" },
+  { id: 1, user: { name: "Alice Smith", avatar: "https://placehold.co/100x100/E8F0FE/505050?text=AS" }, action: "reviewed assignment for", subject: "Class 5 Math" },
+  { id: 2, user: { name: "John Doe", avatar: "https://placehold.co/100x100/E8F0FE/505050?text=JD" }, action: "scheduled exam for", subject: "Class 8 Science" }
 ];
 
 export const MOCK_CLASSES = [
