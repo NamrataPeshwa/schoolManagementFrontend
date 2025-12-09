@@ -6,6 +6,9 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        poppins: ['Poppins', 'ui-sans-serif', 'system-ui'],
+      },
       animation: {
         'wave': 'wave 8s ease-in-out infinite',
         'wave-slow': 'wave 12s ease-in-out infinite',
